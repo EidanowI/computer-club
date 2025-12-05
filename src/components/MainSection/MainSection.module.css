@@ -1,0 +1,168 @@
+.main_sec_conteiner {
+    width:100%;
+    height: 100%;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+}
+
+.main_sec_main {
+    grid-column: span 3 / span 3;
+    grid-row: span 3 / span 3;
+    width: 100%;
+    height: 100%;
+    position: relative;
+    background-image: url(../../public/img/backgrounds/csback.png);
+    transition: all 0.3s ease-in-out;
+    
+}
+.main_sec_main:hover {
+    background-image: url(../../public/img/backgrounds/csback-hover.png);
+}
+.main_sec_label_cont{
+  width: 100%;
+  z-index: 100;
+  padding-top: 490px;
+  margin-left: 55px;
+}
+.main_sec_label_update_msg{
+  filter: none !important; /* Отключаем фильтры для текста */
+  color: rgb(234, 64, 38) !important; /* Явно задаём цвет */
+  font-family:  "Open Sans", sans-serif;
+  font-size: 1.6rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-shadow: rgb(234, 64, 38) 0px 0px 17px;
+  z-index: 20;
+  transition: all 0.3s ease;
+}
+.main_sec_main:hover .main_sec_label_update_msg{
+    color: rgb(255, 255, 255) !important; /* Явно задаём цвет */
+
+  text-shadow: rgb(0, 0, 0) 0px 0px 30px;
+
+}
+.main_sec_label_info_msg{
+  margin-bottom: 0px !important;
+
+  color: rgb(0, 204, 255) !important;
+  font-family:  "Inter", sans-serif;
+  font-size: 5rem;
+  font-weight: 900;
+  font-style: italic;
+  letter-spacing: 2px;
+  transition: all 0.3s ease;
+}
+.main_sec_main:hover .main_sec_label_info_msg{
+    color: rgb(255, 255, 255) !important;
+}
+.main_sec_main_morebtn::before{
+  content: "";
+  position: absolute;
+  width: 60px;
+  height: 5px;
+  background-color: gray;
+  z-index: -1;
+   top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  transition: all 0.1s ease-out;
+}
+.main_sec_main_morebtn{
+  position: relative;
+  width: 170px;
+  height: 45px;
+  margin-top: 0px;
+  border: solid 2px rgb(0, 204, 255);
+  color: rgb(0, 204, 255);
+  background: none;
+  font-size: 0.9rem;
+  font-family: "Space Mono", monospace;
+  font-weight: 700;
+  font-style: normal;
+  letter-spacing: 0.5px;
+  transition: all 0.1s ease;
+  z-index: 5;
+
+}
+.main_sec_main_morebtn:hover{
+  cursor: pointer;
+  transform: scale(1.2);
+  border: solid 2px rgba(0, 204, 255, 0);
+}
+.main_sec_main_morebtn:hover::before{
+  width: 150px;
+  height: 35px;
+  opacity: 0.3;
+}
+
+
+
+.main_sec_lounge {
+    grid-row: span 4 / span 4;
+    grid-column-start: 4;
+    grid-row-start: 1;
+    
+    /* Объединяем градиент и изображение в одном свойстве */
+    background-image: 
+        url(../../public/img/backgrounds/countdow-n.png);
+    
+    background-size: cover;
+    background-position: center;
+    transition: all 0.3s ease-in-out;
+}
+.main_sec_lounge:hover {
+    background-image: 
+        url(../../public/img/backgrounds/countdown-hover.png);
+}
+.main_sec_lounge_logo{
+  display: block;
+  width: 55%;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 80px;
+  filter: grayscale(1) brightness(0.6);
+  transition: all 0.3s ease-in-out;
+}
+.main_sec_lounge:hover .main_sec_lounge_logo{
+  filter: none;
+}
+.main_sec_lounge_msg{
+  padding-top: 500px;
+  width: 100%;
+  text-align: center;
+  color: rgb(0, 204, 255) !important;
+  font-family:  "Inter", sans-serif;
+  font-size: 1.6rem;
+  font-weight: 900;
+  font-style: italic;
+}
+
+
+
+.main_sec_devices {
+    grid-column-start: 1;
+    grid-row-start: 4;
+    background-image: url(../../public/img/backgrounds/devicesbg.png);
+    background-size: cover;
+    background-position: center;
+    transition: all 0.3s ease-in-out;
+}
+.main_sec_devices:hover{
+  background-image: url(../../public/img/backgrounds/devicesbg-h.png);
+}
+
+
+
+.main_sec_compets {
+    grid-column-start: 2;
+    grid-row-start: 4;
+    background-color: rgb(255, 0, 157);
+}
+
+
+.main_sec_contects {
+    grid-row-start: 4;
+    background-color: rgb(255, 60, 0);
+}

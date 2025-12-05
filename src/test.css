@@ -1,0 +1,61 @@
+*{
+  margin: 0px;
+}
+
+.app {
+  display: flex;
+  min-height: 100vh;
+}
+
+.main-content {
+  margin-left: 200px;
+  width: calc(100% - 200px);
+}
+
+.content-section {
+  height: 100dvh;
+  border-bottom: 1px solid #eee;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  h1 {
+    margin-bottom: 20px;
+    color: #333;
+  }
+
+  p {
+    line-height: 1.6;
+    color: #666;
+  }
+}
+
+#home { background-color: #f8f9fa; }
+#about { background-color: #e9ecef; }
+#services { background-color: #f8f9fa; }
+#portfolio { background-color: #e9ecef; }
+#contact { background-color: #f8f9fa; }
+
+@media (max-width: 768px) {
+  .main-content {
+    margin-left: 200px;
+    width: calc(100% - 200px);
+  }
+}
+
+@media (max-width: 576px) {
+  .left-navigation {
+    width: 60px;
+    
+    .nav-header h3,
+    .nav-button span {
+      display: none;
+    }
+  }
+  
+  .main-content {
+    margin-left: 60px;
+    width: calc(100% - 60px);
+  }
+}
