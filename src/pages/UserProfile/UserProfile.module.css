@@ -1,0 +1,129 @@
+.container {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgb(20, 20, 20);
+  padding: 20px;
+}
+
+.profileCard {
+  background-color: rgb(37, 37, 37);
+  border: 2px solid #00c3fc;
+  border-radius: 10px;
+  padding: 40px;
+  width: 100%;
+  max-width: 600px;
+  color: white;
+  box-shadow: 0 8px 24px rgba(0, 195, 252, 0.3);
+}
+
+.title {
+  margin-top: 0;
+  margin-bottom: 30px;
+  font-family: "Space Mono", monospace;
+  color: #00c3fc;
+  text-transform: uppercase;
+  font-size: 2rem;
+  text-align: center;
+}
+
+.userInfo {
+  margin-bottom: 30px;
+}
+
+.infoRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid rgba(0, 195, 252, 0.3);
+}
+
+.infoRow:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.label {
+  font-family: "Space Mono", monospace;
+  font-size: 1.1rem;
+  color: #00c3fc;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin-right: 20px;
+}
+
+.value {
+  font-family: "Space Mono", monospace;
+  font-size: 1.1rem;
+  color: white;
+  font-weight: 400;
+  text-align: right;
+  word-break: break-word;
+}
+
+.buttonsContainer {
+  display: flex;
+  gap: 15px;
+  margin-top: 10px;
+}
+
+.homeButton {
+  flex: 1;
+  padding: 15px;
+  background-color: #00c3fc;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-family: "Space Mono", monospace;
+  font-weight: 700;
+  font-size: 1.1rem;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.homeButton:hover {
+  filter: drop-shadow(0 0px 8px #00c3fc);
+  transform: translateY(-2px);
+}
+
+.homeButton:active {
+  transform: translateY(0);
+}
+
+.logoutButton {
+  flex: 1;
+  padding: 15px;
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-family: "Space Mono", monospace;
+  font-weight: 700;
+  font-size: 1.1rem;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.logoutButton:hover {
+  background-color: #c82333;
+  filter: drop-shadow(0 0px 8px #dc3545);
+  transform: translateY(-2px);
+}
+
+.logoutButton:active {
+  transform: translateY(0);
+}
+
+.loading {
+  color: #00c3fc;
+  font-family: "Space Mono", monospace;
+  font-size: 1.5rem;
+  text-align: center;
+}
+

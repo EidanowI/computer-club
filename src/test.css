@@ -2,6 +2,10 @@
   margin: 0px;
 }
 
+body{
+  background: #252525 url(//cyberspace.by/wp-content/themes/cyberspace/css/../images/background.png) repeat-y scroll;
+}
+
 .app {
   display: flex;
   min-height: 100vh;
@@ -14,7 +18,6 @@
 
 .content-section {
   height: 100dvh;
-  border-bottom: 1px solid #eee;
 
   &:last-child {
     border-bottom: none;
@@ -33,9 +36,9 @@
 
 #home { background-color: #f8f9fa; }
 #about { background-color: #e9ecef; }
-#services { background-color: #f8f9fa; }
+#services { background-color: #faf8fa; }
 #portfolio { background-color: #e9ecef; }
-#contact { background-color: #f8f9fa; }
+#contact { background-color: #0080ff; }
 
 @media (max-width: 768px) {
   .main-content {

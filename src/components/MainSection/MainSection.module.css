@@ -13,15 +13,36 @@
     height: 100%;
     position: relative;
     background-image: url(../../public/img/backgrounds/csback.png);
-    transition: all 0.3s ease-in-out;
-    
+    background-size: cover;
+    background-position: cover;
+    overflow: hidden;
+    will-change: background-image;
+    transform: translateZ(0);
+    backface-visibility: hidden;
 }
-.main_sec_main:hover {
+
+.main_sec_main::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     background-image: url(../../public/img/backgrounds/csback-hover.png);
+    background-size: cover;
+    background-position: cover;
+    opacity: 0;
+    transition: opacity 0.15s ease-in-out;
+    pointer-events: none;
+}
+
+.main_sec_main:hover::before {
+    opacity: 1;
 }
 .main_sec_label_cont{
   width: 100%;
-  z-index: 100;
+  position: relative;
+  z-index: 10;
   padding-top: 490px;
   margin-left: 55px;
 }
@@ -35,6 +56,8 @@
   text-shadow: rgb(234, 64, 38) 0px 0px 17px;
   z-index: 20;
   transition: all 0.3s ease;
+  cursor: default;
+  user-select: none;
 }
 .main_sec_main:hover .main_sec_label_update_msg{
     color: rgb(255, 255, 255) !important; /* Явно задаём цвет */
@@ -52,6 +75,8 @@
   font-style: italic;
   letter-spacing: 2px;
   transition: all 0.3s ease;
+  cursor: default;
+  user-select: none;
 }
 .main_sec_main:hover .main_sec_label_info_msg{
     color: rgb(255, 255, 255) !important;
@@ -103,18 +128,33 @@
     grid-row: span 4 / span 4;
     grid-column-start: 4;
     grid-row-start: 1;
-    
-    /* Объединяем градиент и изображение в одном свойстве */
-    background-image: 
-        url(../../public/img/backgrounds/countdow-n.png);
-    
+    position: relative;
+    background-image: url(../../public/img/backgrounds/countdow-n.png);
     background-size: cover;
-    background-position: center;
-    transition: all 0.3s ease-in-out;
+    background-position: cover;
+    overflow: hidden;
+    will-change: background-image;
+    transform: translateZ(0);
+    backface-visibility: hidden;
 }
-.main_sec_lounge:hover {
-    background-image: 
-        url(../../public/img/backgrounds/countdown-hover.png);
+
+.main_sec_lounge::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url(../../public/img/backgrounds/countdown-hover.png);
+    background-size: cover;
+    background-position: cover;
+    opacity: 0;
+    transition: opacity 0.15s ease-in-out;
+    pointer-events: none;
+}
+
+.main_sec_lounge:hover::before {
+    opacity: 1;
 }
 .main_sec_lounge_logo{
   display: block;
@@ -122,8 +162,10 @@
   margin-left: auto;
   margin-right: auto;
   margin-top: 80px;
+  position: relative;
+  z-index: 10;
   filter: grayscale(1) brightness(0.6);
-  transition: all 0.3s ease-in-out;
+  transition: filter 0.15s ease-in-out;
 }
 .main_sec_lounge:hover .main_sec_lounge_logo{
   filter: none;
@@ -131,12 +173,16 @@
 .main_sec_lounge_msg{
   padding-top: 500px;
   width: 100%;
+  position: relative;
+  z-index: 10;
   text-align: center;
   color: rgb(0, 204, 255) !important;
   font-family:  "Inter", sans-serif;
   font-size: 1.6rem;
   font-weight: 900;
   font-style: italic;
+  cursor: default;
+  user-select: none;
 }
 
 
@@ -144,25 +190,266 @@
 .main_sec_devices {
     grid-column-start: 1;
     grid-row-start: 4;
+    position: relative;
     background-image: url(../../public/img/backgrounds/devicesbg.png);
     background-size: cover;
-    background-position: center;
-    transition: all 0.3s ease-in-out;
-}
-.main_sec_devices:hover{
-  background-image: url(../../public/img/backgrounds/devicesbg-h.png);
+    background-position: cover;
+    overflow: hidden;
+    will-change: background-image;
+    transform: translateZ(0);
+    backface-visibility: hidden;
 }
 
+.main_sec_devices::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url(../../public/img/backgrounds/devicesbg-h.png);
+    background-size: cover;
+    background-position: cover;
+    opacity: 0;
+    transition: opacity 0.15s ease-in-out;
+    pointer-events: none;
+}
 
+.main_sec_devices:hover::before {
+    opacity: 1;
+}
 
 .main_sec_compets {
-    grid-column-start: 2;
-    grid-row-start: 4;
-    background-color: rgb(255, 0, 157);
+  grid-column-start: 2;
+  grid-row-start: 4;
+  position: relative;
+  background-image: url(../../public/img/backgrounds/compets.png);
+  background-size: cover;
+    background-position: cover;
+  overflow: hidden;
+  will-change: background-image;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+.main_sec_compets::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url(../../public/img/backgrounds/compets-h.png);
+    background-size: cover;
+    background-position: cover;
+    opacity: 0;
+    transition: opacity 0.15s ease-in-out;
+    pointer-events: none;
+}
+
+.main_sec_compets:hover::before {
+    opacity: 1;
+}
+
+.main_sec_contacts {
+  grid-row-start: 4;
+  position: relative;
+  background-image: url(../../public/img/backgrounds/contacts.png);
+  background-size: cover;
+    background-position: cover;
+  overflow: hidden;
+  will-change: background-image;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+.main_sec_contacts::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url(../../public/img/backgrounds/contacts-h.png);
+    background-size: cover;
+    background-position: cover;
+    opacity: 0;
+    transition: opacity 0.15s ease-in-out;
+    pointer-events: none;
+}
+
+.main_sec_contacts:hover::before {
+    opacity: 1;
+}
+
+.main_sec_card_title{
+  position: relative;
+  width: 80%;
+  text-transform: uppercase;
+  font-family: "Open Sans", sans-serif;
+  letter-spacing: 1.2px;
+  font-weight: 400;
+  font-size: 1.8rem;
+  color: white !important;
+  text-align: left;
+  margin-top: 30px;
+  padding-left: 35px;
+  line-height: 1.1 !important;
+  white-space: normal;
+  word-wrap: break-word;
+  display: block;
+  z-index: 100;
+  cursor: default;
+  user-select: none;
+}
+.main_sec_card_subtitle{
+  position: relative;
+  text-transform: uppercase;
+  font-family: "Inter", sans-serif;
+  font-style: italic;
+  font-weight: 900;
+  font-size: 36px;
+  color: rgb(0, 204, 255) !important;
+  text-align: left;
+  padding-left: 35px;
+  letter-spacing: 1.2px;
+  line-height: 80px;
+  font-size-adjust: 100%;
+  z-index: 100;
+  cursor: default;
+  user-select: none;
+  transition: all 0.2s ease-in-out;
+}
+
+.main_sec_contacts:hover .main_sec_card_subtitle,
+.main_sec_compets:hover .main_sec_card_subtitle,
+.main_sec_devices:hover .main_sec_card_subtitle {
+  color: white !important;
 }
 
 
-.main_sec_contects {
-    grid-row-start: 4;
-    background-color: rgb(255, 60, 0);
+.main_sec_devices_morebtn::before{
+  content: "";
+  position: absolute;
+  width: 60px;
+  height: 5px;
+  background-color: rgb(255, 255, 255);
+  z-index: -1;
+   top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  transition: all 0.1s ease-out;
+}
+.main_sec_devices_morebtn{
+  position: relative;
+  width: 170px;
+  height: 45px;
+  margin-top: 0px;
+  border: solid 2px rgb(255, 255, 255);
+  color: rgb(255, 255, 255)!important;
+  background: none;
+  font-size: 0.9rem;
+  font-family: "Space Mono", monospace;
+  font-weight: 700;
+  font-style: normal;
+  letter-spacing: 0.5px;
+  transition: all 0.1s ease;
+  z-index: 5;
+  margin-left: 35px !important;  
+  margin-top: 10px !important;
+}
+.main_sec_devices_morebtn:hover{
+  cursor: pointer;
+  transform: scale(1.2);
+  border: solid 2px rgba(0, 204, 255, 0);
+}
+.main_sec_devices_morebtn:hover::before{
+  width: 150px;
+  height: 35px;
+  opacity: 0.4;
+}
+
+.main_sec_compets_morebtn::before{
+  content: "";
+  position: absolute;
+  width: 60px;
+  height: 5px;
+  background-color: white;
+  z-index: -1;
+   top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  transition: all 0.1s ease-out;
+}
+.main_sec_compets_morebtn{
+  position: relative;
+  width: 170px;
+  height: 45px;
+  margin-top: 0px;
+  border: solid 2px rgb(255, 255, 255);
+  color: rgb(255, 255, 255);
+  background: none;
+  font-size: 0.9rem;
+  font-family: "Space Mono", monospace;
+  font-weight: 700;
+  font-style: normal;
+  letter-spacing: 0.5px;
+  transition: all 0.1s ease;
+  z-index: 5;
+  margin-left: 35px !important;
+  margin-top: 10px !important;
+}
+.main_sec_compets_morebtn:hover{
+  cursor: pointer;
+  transform: scale(1.2);
+  border: solid 2px rgba(0, 204, 255, 0);
+}
+.main_sec_compets_morebtn:hover::before{
+  width: 150px;
+  height: 35px;
+  opacity: 0.4;
+}
+
+.main_sec_contacts_morebtn::before{
+  content: "";
+  position: absolute;
+  width: 60px;
+  height: 5px;
+  background-color: white;
+  z-index: -1;
+   top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  transition: all 0.1s ease-out;
+}
+.main_sec_contacts_morebtn{
+  position: relative;
+  width: 170px;
+  height: 45px;
+  margin-top: 0px;
+  border: solid 2px rgb(255, 255, 255);
+  color: rgb(255, 255, 255);
+  background: none;
+  font-size: 0.9rem;
+  font-family: "Space Mono", monospace;
+  font-weight: 700;
+  font-style: normal;
+  letter-spacing: 0.5px;
+  transition: all 0.1s ease;
+  z-index: 5;
+  margin-left: 35px !important;
+  margin-top: 10px !important;
+}
+.main_sec_contacts_morebtn:hover{
+  cursor: pointer;
+  transform: scale(1.2);
+  border: solid 2px rgba(0, 204, 255, 0);
+}
+.main_sec_contacts_morebtn:hover::before{
+  width: 150px;
+  height: 35px;
+  opacity: 0.4;
 }

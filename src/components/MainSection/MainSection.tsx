@@ -23,9 +23,21 @@ export default function MainSection(){
         <img className={styles.main_sec_lounge_logo} src="../../public/img/logo.png"></img>
         <p className={styles.main_sec_lounge_msg}>ПЕРВЫЙ КИБЕРЛАУНДЖ В МИНКЕ!</p>
       </div>
-      <div className={styles.main_sec_devices}></div>
-      <div className={styles.main_sec_compets}>4</div>
-      <div className={styles.main_sec_contects}>7</div>
+      <div className={styles.main_sec_devices}>
+        <p className={styles.main_sec_card_title}>Узнай что у нас есть</p>
+        <p className={styles.main_sec_card_subtitle}>Девайсы</p>
+        <button className={styles.main_sec_devices_morebtn} onClick={() => handleNavClick("price")}>Смотреть все</button>
+      </div>
+      <div className={styles.main_sec_compets}>
+        <p className={styles.main_sec_card_title}>Побеждай вместе с нами</p>
+        <p className={styles.main_sec_card_subtitle}>Турниры</p>
+        <button className={styles.main_sec_compets_morebtn} onClick={() => handleNavClick("price")}>Ближайшие даты</button>
+      </div>
+      <div className={styles.main_sec_contacts}>
+        <p className={styles.main_sec_card_title}>Играй в любое время</p>
+        <p className={styles.main_sec_card_subtitle}>Контакты</p>
+        <button className={styles.main_sec_contacts_morebtn} onClick={() => handleNavClick("price")}>Смотреть все</button>
+      </div>
     </div>
   </>);
 }

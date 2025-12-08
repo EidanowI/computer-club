@@ -1,0 +1,79 @@
+.popover {
+  position: fixed;
+  z-index: 1000;
+  pointer-events: auto;
+}
+
+.popoverContent {
+  background-color: rgb(37, 37, 37);
+  border: 1px solid #00c3fc;
+  border-radius: 8px;
+  padding: 15px;
+  min-width: 200px;
+  box-shadow: 0 4px 12px rgba(0, 195, 252, 0.3);
+  overflow: visible;
+}
+
+.userInfo {
+  margin-bottom: 15px;
+}
+
+.infoRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(0, 195, 252, 0.2);
+}
+
+.infoRow:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.label {
+  font-family: "Space Mono", monospace;
+  font-size: 0.85rem;
+  color: #00c3fc;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin-right: 10px;
+}
+
+.value {
+  font-family: "Space Mono", monospace;
+  font-size: 0.9rem;
+  color: white;
+  font-weight: 400;
+  text-align: right;
+  word-break: break-word;
+}
+
+.logoutButton {
+  width: 100%;
+  padding: 10px;
+  background-color: #00c3fc;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-family: "Space Mono", monospace;
+  font-weight: 700;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 10px;
+  display: block;
+}
+
+.logoutButton:hover {
+  filter: drop-shadow(0 0px 5px #00c3fc);
+  transform: translateY(-2px);
+}
+
+.logoutButton:active {
+  transform: translateY(0);
+}
+
