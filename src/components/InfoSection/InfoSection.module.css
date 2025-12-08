@@ -1,0 +1,187 @@
+.info_sec_conteiner {
+    width:100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.info_sec_text_wrapper {
+    display: flex;
+    align-items: flex-start;
+    gap: 40px;
+    padding: 0 80px;
+}
+
+.info_sec_text_container {
+    flex: 0 0 45%;
+}
+
+.info_sec_title {
+    color: rgb(0, 204, 255);
+    font-family: "Inter", sans-serif;
+    font-size: 80px;
+    font-style: italic;
+    font-weight: 900;
+    letter-spacing: 0px;
+    z-index: 20;
+    transition: all 0.3s ease;
+    cursor: default;
+    user-select: none;
+    text-transform: uppercase;
+    font-style: italic; 
+    font-size-adjust: 0.58;
+    position: relative;
+    margin-top: 180px;
+    margin-left: 80px;
+    pointer-events: none;
+}
+
+.info_sec_title::before {
+    content: "computerclub";
+    position: absolute;
+    top: -90px;
+    left: -30px;
+    width: 100%;
+    height: 100%;
+    opacity: 0.15;
+    z-index: -1;
+    transform: skewX(-10deg);
+    transform-origin: top left;
+    transition: all 0.3s ease;
+    cursor: default;
+    user-select: none;
+    text-transform: uppercase;
+    font-style: italic; 
+    font-size-adjust: 0.58;
+    color: black;
+    font-family: "Inter", sans-serif;
+    font-size: 130px;
+    font-style: italic;
+    font-weight: 900;
+    letter-spacing: 0px;
+}
+
+.info_sec_text{
+    display: block;
+    font-family: "monospace", sans-serif;
+    font-size: 20px;
+    letter-spacing: 0.5px;
+    line-height: 24px;
+    color: white !important;
+    font-weight: 600;
+    text-align: left;
+    padding: 0;
+    border: none;
+    margin-left: 0;
+    width: 100%;
+    margin-top: 10px;
+}
+
+.info_inter_cards_conteiner{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(8, 1fr);
+    gap: 20px;
+    width: 45%;
+    height: 650px;
+    flex-shrink: 0;
+    transform: translateY(-70px);
+}
+
+.info_inter_card1{
+    grid-row: span 5 / span 5;
+    background: url(../../public/img/inter-cards/inter-1.png);
+    filter: grayscale(1) brightness(0.6);
+    background-size: cover;
+    z-index: 10 !important;
+    margin-right: 4px;
+    border-radius: 20px;
+    transition: all 0.3s ease;
+}
+.info_inter_card1:hover{
+    filter: grayscale(0) brightness(1);
+}
+
+.info_inter_card2 {
+    grid-row: span 5 / span 5;
+    background: url(../../public/img/inter-cards/inter-2.jpg);
+    filter: grayscale(1) brightness(0.6);
+    background-size: cover;
+    margin-left: 4px;
+    border-radius: 20px;
+}
+.info_inter_card2:hover{
+    filter: grayscale(0) brightness(1);
+}
+
+.info_inter_card3 {
+    grid-row: span 3 / span 3;
+    grid-column-start: 2;
+    grid-row-start: 6;
+    background: url(../../public/img/inter-cards/inter-3.jpg);
+    filter: grayscale(1) brightness(0.6);
+    background-size: cover;
+    margin-left: 4px;
+    border-radius: 20px;
+}
+.info_inter_card3:hover{
+    filter: grayscale(0) brightness(1);
+}
+.info_inter_card4 {
+    grid-row: span 3 / span 3;
+    grid-column-start: 1;
+    grid-row-start: 6;
+    background: url(../../public/img/inter-cards/inter-4.jpg);
+    filter: grayscale(1) brightness(0.6);
+    background-size: cover;
+    margin-right: 4px;
+    border-radius: 20px;
+}
+.info_inter_card4:hover{
+    filter: grayscale(0) brightness(1);
+}
+
+
+
+.info_sec_orderbtn::before{
+    content: "";
+    position: absolute;
+    width: 60px;
+    height: 5px;
+    background-color: gray;
+    z-index: -1;
+     top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    transition: all 0.1s ease-out;
+  }
+  .info_sec_orderbtn{
+    position: relative;
+    width: 220px;
+    height: 45px;
+    margin-top: 40px;
+    margin-left: 40px;
+    border: solid 2px rgb(0, 204, 255);
+    color: rgb(0, 204, 255);
+    background: none;
+    font-size: 0.9rem;
+    font-family: "Space Mono", monospace;
+    font-weight: 700;
+    font-style: normal;
+    letter-spacing: 0.5px;
+    transition: all 0.1s ease;
+    z-index: 5;
+  
+  }
+  .info_sec_orderbtn:hover{
+    cursor: pointer;
+    transform: scale(1.2);
+    border: solid 2px rgba(0, 204, 255, 0);
+  }
+  .info_sec_orderbtn:hover::before{
+    width: 150px;
+    height: 35px;
+    opacity: 0.3;
+  }

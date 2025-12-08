@@ -1,6 +1,7 @@
 import NavBar from "../../components/NavBar";
 import MainSection from "../../components/MainSection";
 import InfoSection from "../../components/InfoSection";
+import PriceSection from "../../components/PriceSection";
 
 const navSections = [
   { id: 'home', label: 'О клубе', iconPath: "" },
@@ -21,33 +22,28 @@ export default function Home() {
         <MainSection/>
       </section>
 
-      <section id="info" className="content-section">
+      <section id="info" className="content-section-info">
         <InfoSection/>
       </section>
 
       <section id="price" className="content-section">
-        <h1>Услуги</h1>
-        <p>Наши услуги...</p>
+        <PriceSection/>
       </section>
 
       <section id="arenas" className="content-section">
-        <h1>Портфолио</h1>
-        <p>Наши работы...</p>
+        <PriceSection/>
       </section>
 
       <section id="devices" className="content-section">
-        <h1>Контакты</h1>
-        <p>Контактная информация...</p>
+        <PriceSection/>
       </section>
 
       <section id="compets" className="content-section">
-        <h1>Контакты</h1>
-        <p>Контактная информация...</p>
+        <PriceSection/>
       </section>
 
       <section id="contscts" className="content-section">
-        <h1>Контакты</h1>
-        <p>Контактная информация...</p>
+        <PriceSection/>
       </section>
       </main>
     </div>

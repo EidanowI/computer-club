@@ -93,7 +93,7 @@ export default function NavBar({ sections } : NavigationProps){
     };
     loadData();
   }, []);
-
+  
   // Закрываем popover при изменении пользователя
   useEffect(() => {
     if (!user) {
@@ -205,26 +205,26 @@ export default function NavBar({ sections } : NavigationProps){
 
   return (
     <>
-      <nav className={styles.nav_bar_conteiner}>
-        <div className={styles.nav_logo_conteiner}>
-          <img className={styles.nav_logo_conteiner_img} src="././public/img/logo.png" onClick={() => handleNavClick(sections[0].id)}></img>
-        </div>
-        <ul className={styles.nav_list}>
-          {sections.map((section) => (section.id == "home" ? "" : 
-            <li key={section.id} 
-              className={`${styles.nav_button} ${activeSection === section.id ? styles.active : ''}`}
-              onClick={() => handleNavClick(section.id)}
-            >
-              
-                <div className={styles.nav_icon_conteiner}>
-                  <img src={section.iconPath}></img>
-                </div>
-                 <p>{section.label}</p>
-            </li>
-          ))}
-        </ul>
+    <nav className={styles.nav_bar_conteiner}>
+      <div className={styles.nav_logo_conteiner}>
+        <img className={styles.nav_logo_conteiner_img} src="././public/img/logo.png" onClick={() => handleNavClick(sections[0].id)}></img>
+      </div>
+      <ul className={styles.nav_list}>
+        {sections.map((section) => (section.id == "home" ? "" : 
+          <li key={section.id} 
+            className={`${styles.nav_button} ${activeSection === section.id ? styles.active : ''}`}
+            onClick={() => handleNavClick(section.id)}
+          >
+            
+              <div className={styles.nav_icon_conteiner}>
+                <img src={section.iconPath}></img>
+              </div>
+               <p>{section.label}</p>
+          </li>
+        ))}
+      </ul>
         {renderAuthButton()}
-      </nav>
+    </nav>
       <LoginModal 
         isOpen={isLoginModalOpen}
         onClose={() => setIsLoginModalOpen(false)}

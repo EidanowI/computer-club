@@ -16,29 +16,18 @@ body{
   width: calc(100% - 200px);
 }
 
+.content-section_home{
+  height: 100dvh;
+}
 .content-section {
   height: 100dvh;
-
-  &:last-child {
-    border-bottom: none;
-  }
-
-  h1 {
-    margin-bottom: 20px;
-    color: #333;
-  }
-
-  p {
-    line-height: 1.6;
-    color: #666;
-  }
+  border-top: 1px solid #00c1fc00;
 }
 
-#home { background-color: #f8f9fa; }
-#about { background-color: #e9ecef; }
-#services { background-color: #faf8fa; }
-#portfolio { background-color: #e9ecef; }
-#contact { background-color: #0080ff; }
+.content-section-info {
+  height: 100dvh;
+  border-top: 1px solid #00c1fc00
+}
 
 @media (max-width: 768px) {
   .main-content {
