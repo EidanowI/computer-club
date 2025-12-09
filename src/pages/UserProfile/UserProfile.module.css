@@ -1,13 +1,14 @@
 .container {
-  min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
   position: relative;
-  background-color: rgb(20, 20, 20);
   padding: 20px;
+  box-sizing: border-box;
 }
 
 .logo {
   position: absolute;
-  top: -5px;
+  top: +20px;
   left: 30px;
   width: 150px;
   height: 150px;
@@ -21,13 +22,271 @@
   transform: scale(1.05);
 }
 
+.contentWrapper {
+  display: flex;
+  gap: 40px;
+  height: 100%;
+  padding-top: 80px;
+  padding-left: 200px;
+  padding-right: 80px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.ordersSection {
+  flex: 0 0 400px;
+  height: calc(100vh - 120px);
+  overflow-y: auto;
+  padding-right: 10px;
+  margin-left: 200px;
+  box-sizing: border-box;
+}
+
+.ordersSection::-webkit-scrollbar {
+  width: 8px;
+}
+
+.ordersSection::-webkit-scrollbar-track {
+  background: rgba(37, 37, 37, 0.5);
+  border-radius: 4px;
+}
+
+.ordersSection::-webkit-scrollbar-thumb {
+  background: rgba(0, 195, 252, 0.5);
+  border-radius: 4px;
+}
+
+.ordersSection::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 195, 252, 0.7);
+}
+
+.ordersTitle {
+  margin-top: 0;
+  margin-bottom: 20px;
+  font-family: "Inter", sans-serif;
+  color: #00c3fc;
+  font-size: 2rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  text-align: center;
+  letter-spacing: 1px;
+  text-shadow: 0 0 20px rgba(0, 195, 252, 0.5);
+}
+
+.dateSelector {
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+}
+
+.dateLabel {
+  font-family: "Space Mono", monospace;
+  font-size: 0.9rem;
+  color: #00c3fc;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.dateInput {
+  width: 100%;
+  padding: 10px;
+  background-color: rgb(37, 37, 37);
+  border: 2px solid #00c3fc;
+  border-radius: 8px;
+  color: white;
+  font-family: "Space Mono", monospace;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color-scheme: dark;
+  box-sizing: border-box;
+}
+
+.dateInput:hover {
+  border-color: #00d4ff;
+  box-shadow: 0 0 10px rgba(0, 195, 252, 0.3);
+}
+
+.dateInput:focus {
+  outline: none;
+  border-color: #00d4ff;
+  box-shadow: 0 0 15px rgba(0, 195, 252, 0.5);
+}
+
+.dateInput::-webkit-calendar-picker-indicator {
+  filter: invert(1) brightness(0) saturate(100%) invert(70%) sepia(100%) saturate(2000%) hue-rotate(180deg);
+  cursor: pointer;
+  opacity: 0.8;
+}
+
+.dateInput::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
+}
+
+.totalSumContainer {
+  background: linear-gradient(135deg, rgba(0, 195, 252, 0.2) 0%, rgba(0, 195, 252, 0.1) 100%);
+  border: 2px solid #00c3fc;
+  border-radius: 12px;
+  padding: 15px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.totalSumLabel {
+  font-family: "Space Mono", monospace;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.totalSumValue {
+  font-family: "Space Mono", monospace;
+  font-size: 1.8rem;
+  color: #00c3fc;
+  font-weight: 900;
+  display: block;
+}
+
+.ordersLoading,
+.noOrders {
+  color: rgba(255, 255, 255, 0.6);
+  font-family: "Space Mono", monospace;
+  font-size: 1rem;
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.ordersList {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.orderCard {
+  background: linear-gradient(135deg, rgba(37, 37, 37, 0.95) 0%, rgba(25, 25, 25, 0.95) 100%);
+  border: 2px solid;
+  border-radius: 12px;
+  padding: 20px;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.orderCard_past {
+  border-color: #dc3545;
+  box-shadow: 0 0 15px rgba(220, 53, 69, 0.3);
+}
+
+.orderCard_active {
+  border-color: #28a745;
+  box-shadow: 0 0 20px rgba(40, 167, 69, 0.5);
+  animation: pulse 2s infinite;
+}
+
+.orderCard_future {
+  border-color: #ffc107;
+  box-shadow: 0 0 15px rgba(255, 193, 7, 0.3);
+}
+
+@keyframes pulse {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(40, 167, 69, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(40, 167, 69, 0.8);
+  }
+}
+
+.orderCard:hover {
+  transform: translateY(-2px);
+}
+
+.orderHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.orderDate {
+  font-family: "Space Mono", monospace;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #00c3fc;
+  text-transform: uppercase;
+}
+
+.orderTime {
+  font-family: "Space Mono", monospace;
+  font-size: 1rem;
+  font-weight: 700;
+  color: white;
+}
+
+.orderUser {
+  font-family: "Space Mono", monospace;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.orderUserLabel {
+  font-weight: 700;
+  color: #00c3fc;
+  margin-right: 8px;
+}
+
+.orderUserValue {
+  font-weight: 400;
+  color: white;
+}
+
+.orderDescription {
+  font-family: "Space Mono", monospace;
+  font-size: 1.1rem;
+  color: white;
+  margin-bottom: 15px;
+  font-weight: 400;
+}
+
+.orderDetails {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 15px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.orderMinutes {
+  font-family: "Space Mono", monospace;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: 400;
+}
+
+.orderCost {
+  font-family: "Space Mono", monospace;
+  font-size: 1.2rem;
+  color: #00c3fc;
+  font-weight: 700;
+}
+
 .profileWrapper {
+  flex: 1;
   display: flex;
   justify-content: flex-end;
   align-items: flex-start;
-  min-height: 100vh;
-  padding-top: 80px;
-  padding-right: 80px;
 }
 
 .profileCard {

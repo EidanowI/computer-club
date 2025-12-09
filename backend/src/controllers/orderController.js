@@ -1,6 +1,6 @@
 const Order = require('../models/Order');
 const Device = require('../models/Device');
-const { requireAuth } = require('../middleware/auth');
+const { requireAuth, requireAdmin } = require('../middleware/auth');
 
 /**
  * Получить список занятых устройств на указанную дату и время
@@ -119,9 +119,69 @@ const getDeviceTarif = async (req, res) => {
   }
 };
 
+/**
+ * Получить все заказы текущего пользователя
+ * GET /api/orders/my-orders
+ */
+const getMyOrders = async (req, res) => {
+  try {
+    const userId = req.session.userId;
+
+    if (!userId) {
+      return res.status(401).json({ error: 'Необходима авторизация' });
+    }
+
+    const orders = await Order.getUserOrders(userId);
+
+    res.json({
+      orders: orders
+    });
+  } catch (error) {
+    console.error('Ошибка при получении заказов:', error);
+    res.status(500).json({ error: 'Ошибка при получении заказов' });
+  }
+};
+
+/**
+ * Получить все заказы за указанную дату (только для администратора)
+ * GET /api/orders/by-date?date=YYYY-MM-DD
+ */
+const getOrdersByDate = async (req, res) => {
+  try {
+    const { date } = req.query;
+
+    if (!date) {
+      return res.status(400).json({ error: 'Необходимо указать дату' });
+    }
+
+    // Проверка формата даты
+    const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+    if (!dateRegex.test(date)) {
+      return res.status(400).json({ error: 'Неверный формат даты. Используйте YYYY-MM-DD' });
+    }
+
+    const orders = await Order.getOrdersByDate(date);
+    
+    // Вычисляем общую сумму
+    const totalSum = orders.reduce((sum, order) => {
+      return sum + parseFloat(order.total_cost);
+    }, 0);
+
+    res.json({
+      orders: orders,
+      totalSum: totalSum.toFixed(2)
+    });
+  } catch (error) {
+    console.error('Ошибка при получении заказов за дату:', error);
+    res.status(500).json({ error: 'Ошибка при получении заказов за дату' });
+  }
+};
+
 module.exports = {
   getBusyDevices,
   createOrder,
-  getDeviceTarif
+  getDeviceTarif,
+  getMyOrders,
+  getOrdersByDate
 };
 

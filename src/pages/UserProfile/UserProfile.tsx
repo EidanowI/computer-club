@@ -8,6 +8,24 @@ interface User {
   name: string;
   phone: string;
   isAdmin: boolean;
+  adminPosition?: string | null;
+}
+
+interface Order {
+  id: number;
+  date: string;
+  time: string;
+  minute_count: number;
+  description: string;
+  minute_cost: number;
+  total_cost: number;
+  user_login?: string;
+  user_name?: string;
+}
+
+interface AdminOrdersByDate {
+  orders: Order[];
+  totalSum: string;
 }
 
 export default function UserProfile() {
@@ -20,6 +38,11 @@ export default function UserProfile() {
   const [phoneError, setPhoneError] = useState<string | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState(false);
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [ordersLoading, setOrdersLoading] = useState(true);
+  const [adminOrders, setAdminOrders] = useState<AdminOrdersByDate | null>(null);
+  const [adminOrdersLoading, setAdminOrdersLoading] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -49,6 +72,63 @@ export default function UserProfile() {
 
     fetchUser();
   }, [navigate]);
+
+  useEffect(() => {
+    const fetchOrders = async () => {
+      if (!user) return;
+      
+      // Для админа загружаем заказы за выбранную дату
+      if (user.isAdmin) {
+        setAdminOrdersLoading(true);
+        try {
+          const response = await fetch(
+            `http://localhost:5000/api/orders/by-date?date=${selectedDate}`,
+            {
+              credentials: 'include'
+            }
+          );
+          
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          
+          const jsonData = await response.json();
+          setAdminOrders({
+            orders: jsonData.orders || [],
+            totalSum: jsonData.totalSum || '0.00'
+          });
+        } catch (err) {
+          console.error('Ошибка получения заказов за дату:', err);
+          setAdminOrders({ orders: [], totalSum: '0.00' });
+        } finally {
+          setAdminOrdersLoading(false);
+        }
+      } else {
+        // Для обычного пользователя загружаем его заказы
+        try {
+          const response = await fetch('http://localhost:5000/api/orders/my-orders', {
+            credentials: 'include'
+          });
+          
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          
+          const jsonData = await response.json();
+          setOrders(jsonData.orders || []);
+        } catch (err) {
+          console.error('Ошибка получения заказов:', err);
+          setOrders([]);
+        } finally {
+          setOrdersLoading(false);
+        }
+      }
+    };
+
+    if (user) {
+      fetchOrders();
+    }
+  }, [user, selectedDate]);
 
   const handleLogoClick = () => {
     navigate('/');
@@ -142,6 +222,45 @@ export default function UserProfile() {
     }
   };
 
+  // Определение статуса заказа: 'past' - прошёл, 'active' - идёт, 'future' - не наступил
+  const getOrderStatus = (order: Order): 'past' | 'active' | 'future' => {
+    const now = new Date();
+    const today = now.toISOString().split('T')[0];
+    const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+    
+    // Вычисляем время окончания заказа
+    const [orderHours, orderMinutes] = order.time.split(':').map(Number);
+    const orderStartMinutes = orderHours * 60 + orderMinutes;
+    const orderEndMinutes = orderStartMinutes + order.minute_count;
+    const orderEndHours = Math.floor(orderEndMinutes / 60);
+    const orderEndMins = orderEndMinutes % 60;
+    const orderEndTime = `${String(orderEndHours).padStart(2, '0')}:${String(orderEndMins).padStart(2, '0')}`;
+    
+    if (order.date < today) {
+      return 'past'; // Заказ прошёл
+    } else if (order.date > today) {
+      return 'future'; // Заказ ещё не наступил
+    } else {
+      // Сегодня - проверяем время
+      if (currentTime >= orderEndTime) {
+        return 'past'; // Заказ уже закончился сегодня
+      } else if (currentTime >= order.time) {
+        return 'active'; // Заказ идёт сейчас
+      } else {
+        return 'future'; // Заказ начнётся позже сегодня
+      }
+    }
+  };
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('ru-RU', { 
+      day: '2-digit', 
+      month: '2-digit', 
+      year: 'numeric' 
+    });
+  };
+
   if (loading) {
     return (
       <div className={styles.container}>
@@ -163,7 +282,104 @@ export default function UserProfile() {
         onClick={handleLogoClick}
       />
       
-      <div className={styles.profileWrapper}>
+      <div className={styles.contentWrapper}>
+        {/* Список заказов слева */}
+        <div className={styles.ordersSection}>
+          <h2 className={styles.ordersTitle}>
+            {user.isAdmin ? 'Все заказы' : 'Мои заказы'}
+          </h2>
+          
+          {user.isAdmin && (
+            <div className={styles.dateSelector}>
+              <label className={styles.dateLabel}>Выбор даты:</label>
+              <input
+                type="date"
+                className={styles.dateInput}
+                value={selectedDate}
+                onChange={(e) => setSelectedDate(e.target.value)}
+              />
+            </div>
+          )}
+
+          {user.isAdmin ? (
+            <>
+              {adminOrdersLoading ? (
+                <div className={styles.ordersLoading}>Загрузка заказов...</div>
+              ) : adminOrders && adminOrders.orders.length === 0 ? (
+                <div className={styles.noOrders}>Заказов за выбранную дату нет</div>
+              ) : adminOrders ? (
+                <>
+                  <div className={styles.totalSumContainer}>
+                    <div className={styles.totalSumLabel}>Общая сумма за день:</div>
+                    <div className={styles.totalSumValue}>{adminOrders.totalSum} руб.</div>
+                  </div>
+                  <div className={styles.ordersList}>
+                    {adminOrders.orders.map((order) => {
+                      const status = getOrderStatus(order);
+                      return (
+                        <div 
+                          key={order.id} 
+                          className={`${styles.orderCard} ${styles['orderCard_' + status]}`}
+                        >
+                          <div className={styles.orderHeader}>
+                            <div className={styles.orderDate}>{formatDate(order.date)}</div>
+                            <div className={styles.orderTime}>{order.time}</div>
+                          </div>
+                          {order.user_login && (
+                            <div className={styles.orderUser}>
+                              <span className={styles.orderUserLabel}>Пользователь:</span>
+                              <span className={styles.orderUserValue}>
+                                {order.user_name} ({order.user_login})
+                              </span>
+                            </div>
+                          )}
+                          <div className={styles.orderDescription}>{order.description}</div>
+                          <div className={styles.orderDetails}>
+                            <div className={styles.orderMinutes}>{order.minute_count} мин.</div>
+                            <div className={styles.orderCost}>{parseFloat(String(order.total_cost)).toFixed(2)} руб.</div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </>
+              ) : null}
+            </>
+          ) : (
+            <>
+              {ordersLoading ? (
+                <div className={styles.ordersLoading}>Загрузка заказов...</div>
+              ) : orders.length === 0 ? (
+                <div className={styles.noOrders}>У вас пока нет заказов</div>
+              ) : (
+                <div className={styles.ordersList}>
+                  {orders.map((order) => {
+                    const status = getOrderStatus(order);
+                    return (
+                      <div 
+                        key={order.id} 
+                        className={`${styles.orderCard} ${styles['orderCard_' + status]}`}
+                      >
+                        <div className={styles.orderHeader}>
+                          <div className={styles.orderDate}>{formatDate(order.date)}</div>
+                          <div className={styles.orderTime}>{order.time}</div>
+                        </div>
+                        <div className={styles.orderDescription}>{order.description}</div>
+                        <div className={styles.orderDetails}>
+                          <div className={styles.orderMinutes}>{order.minute_count} мин.</div>
+                          <div className={styles.orderCost}>{parseFloat(String(order.total_cost)).toFixed(2)} руб.</div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </>
+          )}
+        </div>
+
+        {/* Профиль справа */}
+        <div className={styles.profileWrapper}>
         <div className={styles.profileCard}>
           <h1 className={styles.title}>Профиль</h1>
           
@@ -196,7 +412,7 @@ export default function UserProfile() {
               <div className={styles.infoItem}>
                 <div className={styles.infoLabel}>Роль</div>
                 <div className={`${styles.infoValue} ${styles.adminBadge}`}>
-                  Администратор
+                  {user.adminPosition || 'Администратор'}
                 </div>
               </div>
             )}
@@ -208,6 +424,7 @@ export default function UserProfile() {
           >
             ⚙️ Настройки
           </button>
+        </div>
         </div>
       </div>
 

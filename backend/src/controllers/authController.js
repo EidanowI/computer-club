@@ -43,7 +43,8 @@ const register = async (req, res) => {
         login: user.login,
         name: user.name,
         phone: user.phone,
-        isAdmin: !!admin
+        isAdmin: !!admin,
+        adminPosition: admin ? admin.position : null
       }
     });
   } catch (error) {
@@ -88,7 +89,8 @@ const login = async (req, res) => {
         login: user.login,
         name: user.name,
         phone: user.phone,
-        isAdmin: !!admin
+        isAdmin: !!admin,
+        adminPosition: admin ? admin.position : null
       }
     });
   } catch (error) {
@@ -129,7 +131,8 @@ const getCurrentUser = async (req, res) => {
         login: user.login,
         name: user.name,
         phone: user.phone,
-        isAdmin: !!admin
+        isAdmin: !!admin,
+        adminPosition: admin ? admin.position : null
       }
     });
   } catch (error) {
@@ -171,7 +174,8 @@ const updatePhone = async (req, res) => {
         login: user.login,
         name: user.name,
         phone: user.phone,
-        isAdmin: !!admin
+        isAdmin: !!admin,
+        adminPosition: admin ? admin.position : null
       }
     });
   } catch (error) {

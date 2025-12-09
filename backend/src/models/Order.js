@@ -59,6 +59,59 @@ class Order {
     );
     return result.insertId;
   }
+
+  /**
+   * Получить все заказы пользователя с информацией об устройстве и тарифе
+   * @param {number} userId - ID пользователя
+   * @returns {Promise<Array>} Массив заказов
+   */
+  static async getUserOrders(userId) {
+    const [rows] = await pool.execute(
+      `SELECT 
+        o.id,
+        o.date,
+        o.time,
+        o.minute_count,
+        d.description,
+        t.minute_cost,
+        (o.minute_count * t.minute_cost) as total_cost
+       FROM order_tb o
+       INNER JOIN device d ON o.device_id = d.id
+       INNER JOIN tarif t ON o.tarif_id = t.id
+       WHERE o.user_id = ?
+       ORDER BY o.date DESC, o.time DESC`,
+      [userId]
+    );
+    return rows;
+  }
+
+  /**
+   * Получить все заказы за указанную дату с информацией о пользователе, устройстве и тарифе
+   * @param {string} date - Дата в формате YYYY-MM-DD
+   * @returns {Promise<Array>} Массив заказов с информацией о пользователе
+   */
+  static async getOrdersByDate(date) {
+    const [rows] = await pool.execute(
+      `SELECT 
+        o.id,
+        o.date,
+        o.time,
+        o.minute_count,
+        u.login as user_login,
+        u.name as user_name,
+        d.description,
+        t.minute_cost,
+        (o.minute_count * t.minute_cost) as total_cost
+       FROM order_tb o
+       INNER JOIN user u ON o.user_id = u.id
+       INNER JOIN device d ON o.device_id = d.id
+       INNER JOIN tarif t ON o.tarif_id = t.id
+       WHERE o.date = ?
+       ORDER BY o.time ASC`,
+      [date]
+    );
+    return rows;
+  }
 }
 
 module.exports = Order;
