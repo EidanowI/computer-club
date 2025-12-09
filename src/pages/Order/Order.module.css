@@ -1,0 +1,315 @@
+.order_container {
+    position: relative;
+    width: 100%;
+}
+
+.loading {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #00c3fc;
+    font-family: "Space Mono", monospace;
+    font-size: 1.5rem;
+    text-align: center;
+}
+
+.order_logo {
+    position: absolute;
+    top: -5px;
+    left: 30px;
+    width: 150px;
+    height: 150px;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    z-index: 100;
+}
+
+.order_logo:hover {
+    filter: drop-shadow(0 0px 5px #00c3fc);
+    transform: scale(1.05);
+}
+
+.order_title{
+    color: rgb(0, 204, 255);
+    font-family: "Inter", sans-serif;
+    font-size: 50px;
+    font-style: italic;
+    font-weight: 900;
+    letter-spacing: 0px;
+    cursor: default;
+    user-select: none;
+    text-transform: uppercase;
+    margin-top: 40px;
+    pointer-events: none;
+    display: block;
+    width: 100%;
+    text-align: center;
+}
+
+.order_map{
+    position: fixed;
+    right: 40px;
+    top: 160px;
+    background-image: url(../../public/img/map/map.png);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    width: 700px;
+    height: 700px;
+}
+
+.order_date_container {
+    margin-top: 40px;
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+    width: fit-content;
+}
+
+.order_date_label {
+    color: rgb(0, 204, 255);
+    font-family: "Space Mono", monospace;
+    font-size: 1.2rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.order_date_input {
+    width: 300px;
+    padding: 12px;
+    background-color: rgb(37, 37, 37);
+    border: 2px solid rgb(0, 204, 255);
+    border-radius: 5px;
+    color: white;
+    font-family: "Space Mono", monospace;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.order_date_input:hover {
+    border-color: #00c3fc;
+    box-shadow: 0 0 10px rgba(0, 195, 252, 0.3);
+}
+
+.order_date_input:focus {
+    outline: none;
+    border-color: #00c3fc;
+    box-shadow: 0 0 15px rgba(0, 195, 252, 0.5);
+}
+
+.order_date_input::-webkit-calendar-picker-indicator {
+    filter: invert(1) brightness(0) saturate(100%) invert(70%) sepia(100%) saturate(2000%) hue-rotate(180deg);
+    cursor: pointer;
+    opacity: 0.8;
+}
+
+.order_date_input::-webkit-calendar-picker-indicator:hover {
+    opacity: 1;
+}
+
+/* Стилизация календаря для темной темы */
+.order_date_input::-webkit-datetime-edit-text {
+    color: rgb(0, 204, 255);
+}
+
+.order_date_input::-webkit-datetime-edit-month-field,
+.order_date_input::-webkit-datetime-edit-day-field,
+.order_date_input::-webkit-datetime-edit-year-field {
+    color: white;
+}
+
+.order_date_input::-webkit-datetime-edit-month-field:focus,
+.order_date_input::-webkit-datetime-edit-day-field:focus,
+.order_date_input::-webkit-datetime-edit-year-field:focus {
+    background-color: rgba(0, 195, 252, 0.2);
+    color: rgb(0, 204, 255);
+}
+
+/* Для Firefox */
+.order_date_input {
+    color-scheme: dark;
+}
+
+.order_time_container {
+    margin-top: 30px;
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    gap: 30px;
+    align-items: flex-start;
+    width: fit-content;
+}
+
+.order_time_group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+}
+
+.order_time_label {
+    color: rgb(0, 204, 255);
+    font-family: "Space Mono", monospace;
+    font-size: 1.2rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.order_time_input {
+    width: 120px;
+    padding: 12px;
+    background-color: rgb(37, 37, 37);
+    border: 2px solid rgb(0, 204, 255);
+    border-radius: 5px;
+    color: white;
+    font-family: "Space Mono", monospace;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color-scheme: dark;
+}
+
+.order_time_input:hover {
+    border-color: #00c3fc;
+    box-shadow: 0 0 10px rgba(0, 195, 252, 0.3);
+}
+
+.order_time_input:focus {
+    outline: none;
+    border-color: #00c3fc;
+    box-shadow: 0 0 15px rgba(0, 195, 252, 0.5);
+}
+
+.order_time_input::-webkit-calendar-picker-indicator {
+    filter: invert(1) brightness(0) saturate(100%) invert(70%) sepia(100%) saturate(2000%) hue-rotate(180deg);
+    cursor: pointer;
+    opacity: 0.8;
+}
+
+.order_time_input::-webkit-calendar-picker-indicator:hover {
+    opacity: 1;
+}
+
+.order_time_input_error {
+    border-color: #dc3545 !important;
+    box-shadow: 0 0 10px rgba(220, 53, 69, 0.3) !important;
+}
+
+.order_time_input_error:hover {
+    border-color: #dc3545 !important;
+    box-shadow: 0 0 15px rgba(220, 53, 69, 0.5) !important;
+}
+
+.order_time_input_error:focus {
+    border-color: #dc3545 !important;
+    box-shadow: 0 0 15px rgba(220, 53, 69, 0.5) !important;
+}
+
+.order_total_container {
+    margin-top: 30px;
+    margin-left: auto;
+    margin-right: auto;
+    width: fit-content;
+}
+
+.order_total_text {
+    color: white;
+    font-family: "Space Mono", monospace;
+    font-size: 1.3rem;
+    font-weight: 700;
+    text-align: center;
+}
+
+.order_total_minutes {
+    color: rgb(0, 204, 255);
+    font-size: 1.5rem;
+    font-weight: 900;
+}
+
+.order_map_private_comp{
+    position: fixed;
+    width: 35px;
+    height: 35px;
+    background-color: #898989;
+
+    color: white;
+    font-family: "Space Mono", monospace;
+    font-size: 1.3rem;
+    font-weight: 700;
+    text-align: center;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 6px;
+}
+
+.order_map_private_comp:hover{
+    cursor: pointer; 
+    background-color: #d54242;
+}
+
+.order_map_default_comp{
+    position: fixed;
+    width: 35px;
+    height: 35px;
+    background-color: #898989;
+
+    color: white;
+    font-family: "Space Mono", monospace;
+    font-size: 1.3rem;
+    font-weight: 700;
+    text-align: center;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 6px;
+}
+
+.order_map_psvr_comp{
+    position: fixed;
+    width: 70px;
+    height: 35px;
+    background-color: #3b1cf6;
+
+    color: white;
+    font-family: "Space Mono", monospace;
+    font-size: 1.3rem;
+    font-weight: 700;
+    text-align: center;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 6px;
+}
+
+.order_map_vip_comp{
+    position: fixed;
+    width: 45px;
+    height: 45px;
+    background-color: #f6ee1c;
+
+    color: rgb(164, 164, 164);
+    font-family: "Space Mono", monospace;
+    font-size: 1.3rem;
+    font-weight: 700;
+    text-align: center;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 6px;
+}

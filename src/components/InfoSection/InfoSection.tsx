@@ -1,6 +1,13 @@
+import { useNavigate } from 'react-router-dom';
 import styles from "./InfoSection.module.css"
 
 export default function InfoSection(){
+    const navigate = useNavigate();
+
+    const handleOrderClick = () => {
+        navigate('/order');
+    };
+
     return (
         <div className={styles.info_sec_conteiner}>
             <h2 className={styles.info_sec_title}>Игра начинается</h2>
@@ -19,7 +26,7 @@ export default function InfoSection(){
                     <p className={styles.info_sec_text}>- Super VIP зал на n машин с профессиональным оборудованием</p>
                     <br></br>
                     <p className={styles.info_sec_text}>Также, для любителей PS5 наш киберлаунж предлагает комфортные зоны с диванами и TV.</p>
-                    <button className={styles.info_sec_orderbtn}>Сделать заказ</button>
+                    <button className={styles.info_sec_orderbtn} onClick={handleOrderClick}>Сделать заказ</button>
                 </div>
                 <div className={styles.info_inter_cards_conteiner}>
                     <div className={styles.info_inter_card1}></div>

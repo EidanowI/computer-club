@@ -46,3 +46,14 @@
     font-weight: 900;
     letter-spacing: 0px;
 }
+
+.price_sec_table{
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.price_sec_table_td{
+    width: 170px;
+    height: 50px;
+    background-color: aquamarine;
+}
