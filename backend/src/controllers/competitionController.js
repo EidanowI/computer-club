@@ -173,6 +173,51 @@ const deleteCompetition = async (req, res) => {
   }
 };
 
+/**
+ * Установить победителя соревнования (только для админа)
+ * PUT /api/competitions/:id/winner
+ */
+const setWinner = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { teamId } = req.body;
+
+    if (!teamId) {
+      return res.status(400).json({ error: 'ID команды обязателен' });
+    }
+
+    // Проверяем существование соревнования
+    const competition = await Competition.findById(parseInt(id));
+    if (!competition) {
+      return res.status(404).json({ error: 'Соревнование не найдено' });
+    }
+
+    const success = await Competition.setWinner(parseInt(id), parseInt(teamId));
+    
+    if (!success) {
+      return res.status(400).json({ error: 'Команда не участвует в этом соревновании или произошла ошибка при обновлении' });
+    }
+
+    const updatedCompetition = await Competition.findById(parseInt(id));
+
+    res.json({
+      message: 'Победитель успешно установлен',
+      competition: updatedCompetition
+    });
+  } catch (error) {
+    console.error('Ошибка при установке победителя:', error);
+    
+    // Проверяем, не связана ли ошибка с отсутствием поля в БД
+    if (error.code === 'ER_BAD_FIELD_ERROR' || error.message?.includes('winner_team_id')) {
+      return res.status(500).json({ 
+        error: 'Поле winner_team_id отсутствует в таблице competition. Выполните: ALTER TABLE competition ADD COLUMN winner_team_id INT NULL, ADD FOREIGN KEY (winner_team_id) REFERENCES team(id) ON DELETE SET NULL;' 
+      });
+    }
+    
+    res.status(500).json({ error: error.message || 'Ошибка при установке победителя' });
+  }
+};
+
 module.exports = {
   getAllCompetitions,
   getCompetitionById,
@@ -180,6 +225,7 @@ module.exports = {
   addTeamToCompetition,
   removeTeamFromCompetition,
   getAllTeams,
-  deleteCompetition
+  deleteCompetition,
+  setWinner
 };
 

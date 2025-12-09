@@ -7,6 +7,9 @@ interface Competition {
   date_time: string;
   image_url: string | null;
   teams: string[];
+  team_ids?: number[];
+  winner_team_id?: number | null;
+  winner_team?: string | null;
 }
 
 interface Team {
@@ -42,6 +45,12 @@ export default function CompetsSection() {
   const [selectedTeamId, setSelectedTeamId] = useState('');
   const [addingTeam, setAddingTeam] = useState(false);
   const [addTeamError, setAddTeamError] = useState<string | null>(null);
+  
+  // Форма выбора победителя
+  const [showWinnerModal, setShowWinnerModal] = useState(false);
+  const [selectedWinnerTeamId, setSelectedWinnerTeamId] = useState('');
+  const [settingWinner, setSettingWinner] = useState(false);
+  const [winnerError, setWinnerError] = useState<string | null>(null);
 
   useEffect(() => {
     fetchCompetitions();
@@ -207,6 +216,69 @@ export default function CompetsSection() {
     });
   };
 
+  const isCompetitionPast = (dateTime: string) => {
+    const competitionDate = new Date(dateTime);
+    const now = new Date();
+    return competitionDate < now;
+  };
+
+  const handleSetWinner = async () => {
+    if (!selectedWinnerTeamId || !selectedCompetitionId) {
+      setWinnerError('Выберите команду-победителя');
+      return;
+    }
+
+    setSettingWinner(true);
+    setWinnerError(null);
+
+    try {
+      const response = await fetch(
+        `http://localhost:5000/api/competitions/${selectedCompetitionId}/winner`,
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          credentials: 'include',
+          body: JSON.stringify({ teamId: parseInt(selectedWinnerTeamId) })
+        }
+      );
+
+      const jsonData = await response.json();
+
+      if (!response.ok) {
+        throw new Error(jsonData.error || 'Ошибка при установке победителя');
+      }
+
+      setShowWinnerModal(false);
+      setSelectedWinnerTeamId('');
+      setSelectedCompetitionId(null);
+      fetchCompetitions();
+    } catch (err: any) {
+      setWinnerError(err.message || 'Ошибка при установке победителя');
+    } finally {
+      setSettingWinner(false);
+    }
+  };
+
+  const handleOpenWinnerModal = async (competition: Competition) => {
+    setSelectedCompetitionId(competition.id);
+    // Загружаем только команды, участвующие в этом соревновании
+    if (competition.team_ids && competition.team_ids.length > 0) {
+      const allTeams = await fetch('http://localhost:5000/api/competitions/teams', {
+        credentials: 'include'
+      }).then(res => res.json()).then(data => data.teams || []);
+      
+      const competitionTeams = allTeams.filter((team: Team) => 
+        competition.team_ids?.includes(team.id)
+      );
+      setTeams(competitionTeams);
+    } else {
+      setTeams([]);
+    }
+    setShowWinnerModal(true);
+  };
+
   return (
     <div className={styles.compets_sec_conteiner}>
       <h2 className={styles.compets_sec_title}>Турниры</h2>
@@ -246,23 +318,45 @@ export default function CompetsSection() {
                   <div className={styles.teamsLabel}>Команды:</div>
                   {competition.teams.length > 0 ? (
                     <div className={styles.teamsList}>
-                      {competition.teams.map((team, index) => (
-                        <span key={index} className={styles.teamTag}>
-                          {team}
-                        </span>
-                      ))}
+                      {competition.teams.map((team, index) => {
+                        // Проверяем, является ли команда победителем
+                        const teamId = competition.team_ids && competition.team_ids[index];
+                        const isWinner = competition.winner_team_id && teamId === competition.winner_team_id;
+                        return (
+                          <span 
+                            key={index} 
+                            className={`${styles.teamTag} ${isWinner ? styles.teamTagWinner : ''}`}
+                          >
+                            {team}
+                            {isWinner && <span className={styles.winnerBadge}>🏆</span>}
+                          </span>
+                        );
+                      })}
                     </div>
                   ) : (
                     <div className={styles.noTeams}>Команды не добавлены</div>
                   )}
                 </div>
                 {user?.isAdmin && (
-                  <button
-                    className={styles.addTeamButton}
-                    onClick={() => handleOpenAddTeamModal(competition.id)}
-                  >
-                    ➕ Добавить команду
-                  </button>
+                  <div className={styles.adminButtons}>
+                    {!competition.winner_team_id && (
+                      <button
+                        className={styles.addTeamButton}
+                        onClick={() => handleOpenAddTeamModal(competition.id)}
+                      >
+                        ➕ Добавить команду
+                      </button>
+                    )}
+                    {isCompetitionPast(competition.date_time) && (
+                      <button
+                        className={styles.setWinnerButton}
+                        onClick={() => handleOpenWinnerModal(competition)}
+                        disabled={!!competition.winner_team_id}
+                      >
+                        {competition.winner_team_id ? '🏆 Победитель выбран' : '🏆 Выбрать победителя'}
+                      </button>
+                    )}
+                  </div>
                 )}
               </div>
             </div>
@@ -370,6 +464,50 @@ export default function CompetsSection() {
                 disabled={addingTeam}
               >
                 {addingTeam ? 'Добавление...' : 'Добавить'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Модальное окно выбора победителя */}
+      {showWinnerModal && (
+        <div className={styles.modalOverlay} onClick={() => !settingWinner && setShowWinnerModal(false)}>
+          <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+            <h2 className={styles.modalTitle}>Выбрать победителя</h2>
+            <div className={styles.formGroup}>
+              <label className={styles.formLabel}>Выберите команду-победителя</label>
+              <select
+                className={styles.formInput}
+                value={selectedWinnerTeamId}
+                onChange={(e) => setSelectedWinnerTeamId(e.target.value)}
+                disabled={settingWinner}
+              >
+                <option value="">-- Выберите команду --</option>
+                {teams.map((team) => (
+                  <option key={team.id} value={team.id}>
+                    {team.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            {winnerError && (
+              <div className={styles.errorMessage}>{winnerError}</div>
+            )}
+            <div className={styles.modalButtons}>
+              <button
+                className={styles.modalButtonCancel}
+                onClick={() => setShowWinnerModal(false)}
+                disabled={settingWinner}
+              >
+                Отмена
+              </button>
+              <button
+                className={styles.modalButtonConfirm}
+                onClick={handleSetWinner}
+                disabled={settingWinner}
+              >
+                {settingWinner ? 'Установка...' : 'Установить победителя'}
               </button>
             </div>
           </div>

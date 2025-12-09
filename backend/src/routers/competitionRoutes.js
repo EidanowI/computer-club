@@ -7,7 +7,8 @@ const {
   addTeamToCompetition,
   removeTeamFromCompetition,
   getAllTeams,
-  deleteCompetition
+  deleteCompetition,
+  setWinner
 } = require('../controllers/competitionController');
 const { requireAuth, requireAdmin } = require('../middleware/auth');
 
@@ -23,6 +24,7 @@ router.get('/:id', requireAuth, getCompetitionById);
 router.post('/', requireAuth, requireAdmin, createCompetition);
 router.post('/:id/teams', requireAuth, requireAdmin, addTeamToCompetition);
 router.delete('/:id/teams/:teamId', requireAuth, requireAdmin, removeTeamFromCompetition);
+router.put('/:id/winner', requireAuth, requireAdmin, setWinner);
 router.delete('/:id', requireAuth, requireAdmin, deleteCompetition);
 
 module.exports = router;

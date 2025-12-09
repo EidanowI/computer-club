@@ -12,18 +12,24 @@ class Competition {
         c.award,
         c.date_time,
         c.image_url,
-        GROUP_CONCAT(t.name ORDER BY t.name SEPARATOR ', ') as teams
+        c.winner_team_id,
+        GROUP_CONCAT(t.id ORDER BY t.name SEPARATOR ',') as team_ids,
+        GROUP_CONCAT(t.name ORDER BY t.name SEPARATOR ', ') as teams,
+        GROUP_CONCAT(CASE WHEN t.id = c.winner_team_id THEN t.name END SEPARATOR ', ') as winner_team
        FROM competition c
        LEFT JOIN team_competitor tc ON c.id = tc.competition_id
        LEFT JOIN team t ON tc.team_id = t.id
-       GROUP BY c.id, c.award, c.date_time, c.image_url
+       GROUP BY c.id, c.award, c.date_time, c.image_url, c.winner_team_id
        ORDER BY c.date_time DESC`
     );
     
     // Преобразуем строку команд в массив
     return rows.map(row => ({
       ...row,
-      teams: row.teams ? row.teams.split(', ') : []
+      team_ids: row.team_ids ? row.team_ids.split(',').map(Number) : [],
+      teams: row.teams ? row.teams.split(', ') : [],
+      winner_team: row.winner_team || null,
+      winner_team_id: row.winner_team_id || null
     }));
   }
 
@@ -39,13 +45,15 @@ class Competition {
         c.award,
         c.date_time,
         c.image_url,
+        c.winner_team_id,
         GROUP_CONCAT(t.id ORDER BY t.id SEPARATOR ',') as team_ids,
-        GROUP_CONCAT(t.name ORDER BY t.name SEPARATOR ', ') as teams
+        GROUP_CONCAT(t.name ORDER BY t.name SEPARATOR ', ') as teams,
+        GROUP_CONCAT(CASE WHEN t.id = c.winner_team_id THEN t.name END SEPARATOR ', ') as winner_team
        FROM competition c
        LEFT JOIN team_competitor tc ON c.id = tc.competition_id
        LEFT JOIN team t ON tc.team_id = t.id
        WHERE c.id = ?
-       GROUP BY c.id, c.award, c.date_time, c.image_url`,
+       GROUP BY c.id, c.award, c.date_time, c.image_url, c.winner_team_id`,
       [id]
     );
     
@@ -57,7 +65,9 @@ class Competition {
     return {
       ...row,
       team_ids: row.team_ids ? row.team_ids.split(',').map(Number) : [],
-      teams: row.teams ? row.teams.split(', ') : []
+      teams: row.teams ? row.teams.split(', ') : [],
+      winner_team: row.winner_team || null,
+      winner_team_id: row.winner_team_id || null
     };
   }
 
@@ -138,6 +148,35 @@ class Competition {
       'SELECT id, name FROM team ORDER BY name'
     );
     return rows;
+  }
+
+  /**
+   * Установить победителя соревнования
+   * @param {number} competitionId - ID соревнования
+   * @param {number} teamId - ID команды-победителя
+   * @returns {Promise<boolean>} Успешность установки
+   */
+  static async setWinner(competitionId, teamId) {
+    try {
+      // Проверяем, что команда участвует в соревновании
+      const [existing] = await pool.execute(
+        'SELECT * FROM team_competitor WHERE competition_id = ? AND team_id = ?',
+        [competitionId, teamId]
+      );
+      
+      if (existing.length === 0) {
+        return false; // Команда не участвует в соревновании
+      }
+      
+      const [result] = await pool.execute(
+        'UPDATE competition SET winner_team_id = ? WHERE id = ?',
+        [teamId, competitionId]
+      );
+      return result.affectedRows > 0;
+    } catch (error) {
+      console.error('Ошибка в setWinner:', error);
+      throw error; // Пробрасываем ошибку для обработки в контроллере
+    }
   }
 }
 

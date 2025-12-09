@@ -143,6 +143,21 @@
   font-family: "Space Mono", monospace;
   font-size: 0.85rem;
   font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.teamTagWinner {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.3) 0%, rgba(255, 215, 0, 0.2) 100%);
+  border: 2px solid #ffd700;
+  color: #ffd700;
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+  font-weight: 700;
+  position: relative;
+}
+
+.winnerBadge {
+  margin-left: 6px;
+  font-size: 1rem;
 }
 
 .noTeams {
@@ -152,8 +167,14 @@
   font-style: italic;
 }
 
-.addTeamButton {
+.adminButtons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
   margin-top: 10px;
+}
+
+.addTeamButton {
   padding: 8px 16px;
   background: transparent;
   border: 1px solid #00c3fc;
@@ -175,6 +196,36 @@
 
 .addTeamButton:active {
   transform: scale(0.98);
+}
+
+.setWinnerButton {
+  padding: 8px 16px;
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.2) 0%, rgba(255, 215, 0, 0.1) 100%);
+  border: 1px solid #ffd700;
+  border-radius: 6px;
+  color: #ffd700;
+  font-family: "Space Mono", monospace;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.setWinnerButton:hover:not(:disabled) {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.3) 0%, rgba(255, 215, 0, 0.2) 100%);
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+}
+
+.setWinnerButton:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.setWinnerButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, rgba(255, 215, 0, 0.05) 100%);
 }
 
 /* Модальные окна */
