@@ -31,10 +31,26 @@ class Order {
         const orderEndMinutes = orderStartMinutes + order.minute_count;
 
         // Проверяем пересечение временных интервалов
-        // Заказ пересекается, если:
-        // - начало запрошенного времени < конец заказа И
-        // - конец запрошенного времени > начало заказа
-        if (requestedFromMinutes < orderEndMinutes && requestedToMinutes > orderStartMinutes) {
+        // Заказ пересекается, если интервалы перекрываются
+        // Стандартная проверка пересечения: начало одного < конец другого И конец одного > начало другого
+        
+        // Если запрошенное время переходит через полночь (to < from), 
+        // это означает, что запрос начинается до полуночи и заканчивается после полуночи
+        // В этом случае проверяем только часть до полуночи
+        const maxMinutesInDay = 24 * 60; // 1440 минут
+        
+        let hasOverlap = false;
+        
+        if (requestedToMinutes <= requestedFromMinutes) {
+          // Запрос переходит через полночь - проверяем только часть до полуночи
+          hasOverlap = requestedFromMinutes < orderEndMinutes;
+        } else {
+          // Обычный случай - запрос не переходит через полночь
+          // Проверяем стандартное пересечение интервалов
+          hasOverlap = requestedFromMinutes < orderEndMinutes && requestedToMinutes > orderStartMinutes;
+        }
+        
+        if (hasOverlap) {
           busyDeviceIds.push(order.device_id);
         }
       }

@@ -228,6 +228,45 @@
     user-select: none;
 }
 
+.order_minute_input {
+    width: 100%;
+    padding: 12px;
+    background-color: rgb(37, 37, 37);
+    border: 2px solid rgb(0, 204, 255);
+    border-radius: 5px;
+    color: white;
+    font-family: "Space Mono", monospace;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color-scheme: dark;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+.order_minute_input:hover {
+    border-color: #00c3fc;
+    box-shadow: 0 0 10px rgba(0, 195, 252, 0.3);
+}
+
+.order_minute_input:focus {
+    outline: none;
+    border-color: #00c3fc;
+    box-shadow: 0 0 15px rgba(0, 195, 252, 0.5);
+}
+
+.order_minute_input::-webkit-inner-spin-button,
+.order_minute_input::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    appearance: none;
+    margin: 0;
+}
+
+.order_minute_input[type=number] {
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
+
 .order_time_input_error {
     border-color: #dc3545 !important;
     box-shadow: 0 0 10px rgba(220, 53, 69, 0.3) !important;

@@ -58,18 +58,9 @@ export default function Order() {
     return `${hours}:${minutes}`;
   };
 
-  // Функция для получения времени + 1 час в формате HH:MM
-  const getTimePlusOneHour = () => {
-    const now = new Date();
-    now.setHours(now.getHours() + 1);
-    const hours = String(now.getHours()).padStart(2, '0');
-    const minutes = String(now.getMinutes()).padStart(2, '0');
-    return `${hours}:${minutes}`;
-  };
-
   const [selectedDate, setSelectedDate] = useState(today);
   const [timeFrom, setTimeFrom] = useState(getCurrentTime());
-  const [timeTo, setTimeTo] = useState(getTimePlusOneHour());
+  const [minuteCount, setMinuteCount] = useState(60); // По умолчанию 60 минут (1 час)
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [loading, setLoading] = useState(true);
   const [showNotification, setShowNotification] = useState(false);
@@ -119,24 +110,26 @@ export default function Order() {
     navigate('/');
   };
 
-  const isValidTimeRange = () => {
-    if (!timeFrom || !timeTo) return false;
-    
-    const [fromHours, fromMinutes] = timeFrom.split(':').map(Number);
-    const [toHours, toMinutes] = timeTo.split(':').map(Number);
-    
-    const fromTotalMinutes = fromHours * 60 + fromMinutes;
-    const toTotalMinutes = toHours * 60 + toMinutes;
-    
-    return toTotalMinutes > fromTotalMinutes;
-  };
-
   // Функция для получения занятых устройств с бэкэнда
   const fetchBusyDevices = useCallback(async () => {
-    if (!selectedDate || !timeFrom || !timeTo || !isValidTimeRange()) {
+    if (!selectedDate || !timeFrom || !minuteCount || minuteCount <= 0) {
       setBusyDeviceIds([]);
       return;
     }
+
+    // Вычисляем время окончания заказа
+    const [fromHours, fromMinutes] = timeFrom.split(':').map(Number);
+    const fromTotalMinutes = fromHours * 60 + fromMinutes;
+    const toTotalMinutes = fromTotalMinutes + minuteCount;
+    
+    // Вычисляем часы и минуты
+    // Если заказ переходит через полночь, ограничиваем до 23:59 того же дня
+    const maxMinutesInDay = 24 * 60; // 1440 минут
+    const finalToMinutes = Math.min(toTotalMinutes, maxMinutesInDay - 1); // Максимум 23:59
+    
+    const toHours = Math.floor(finalToMinutes / 60);
+    const toMins = finalToMinutes % 60;
+    const timeTo = `${String(toHours).padStart(2, '0')}:${String(toMins).padStart(2, '0')}`;
 
     setLoadingBusyDevices(true);
     try {
@@ -159,14 +152,14 @@ export default function Order() {
     } finally {
       setLoadingBusyDevices(false);
     }
-  }, [selectedDate, timeFrom, timeTo]);
+  }, [selectedDate, timeFrom, minuteCount]);
 
-  // Запрашиваем занятые устройства при изменении даты или времени
+  // Запрашиваем занятые устройства при изменении даты, времени или количества минут
   useEffect(() => {
-    if (isAuthorized && isValidTimeRange()) {
+    if (isAuthorized && timeFrom && minuteCount > 0) {
       fetchBusyDevices();
     }
-  }, [selectedDate, timeFrom, timeTo, isAuthorized, fetchBusyDevices]);
+  }, [selectedDate, timeFrom, minuteCount, isAuthorized, fetchBusyDevices]);
 
   // Функция для получения информации о тарифе устройства
   const fetchDeviceTarif = useCallback(async (deviceId: number) => {
@@ -228,73 +221,27 @@ export default function Order() {
     return styles[baseClass];
   };
 
-  const calculateMinutes = () => {
-    if (!timeFrom || !timeTo) return 0;
-    
-    const [fromHours, fromMinutes] = timeFrom.split(':').map(Number);
-    const [toHours, toMinutes] = timeTo.split(':').map(Number);
-    
-    const fromTotalMinutes = fromHours * 60 + fromMinutes;
-    const toTotalMinutes = toHours * 60 + toMinutes;
-    
-    const difference = toTotalMinutes - fromTotalMinutes;
-    return difference > 0 ? difference : 0;
-  };
-
   const handleTimeFromChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newTimeFrom = e.target.value;
-    setTimeFrom(newTimeFrom);
-    
-    // Проверяем, что время "до" все еще больше нового времени "от"
-    if (newTimeFrom && timeTo) {
-      const [fromHours, fromMinutes] = newTimeFrom.split(':').map(Number);
-      const [toHours, toMinutes] = timeTo.split(':').map(Number);
-      
-      const fromTotalMinutes = fromHours * 60 + fromMinutes;
-      const toTotalMinutes = toHours * 60 + toMinutes;
-      
-      // Если время "до" меньше или равно времени "от", увеличиваем его на 1 минуту
-      if (toTotalMinutes <= fromTotalMinutes) {
-        const newToTotalMinutes = fromTotalMinutes + 1;
-        const newToHours = Math.floor(newToTotalMinutes / 60);
-        const newToMins = newToTotalMinutes % 60;
-        const newTimeTo = `${String(newToHours).padStart(2, '0')}:${String(newToMins).padStart(2, '0')}`;
-        setTimeTo(newTimeTo);
-      }
+    setTimeFrom(e.target.value);
+  };
+
+  const handleMinuteCountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = parseInt(e.target.value) || 0;
+    if (value >= 0) {
+      setMinuteCount(value);
     }
   };
 
-  const handleTimeToChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newTimeTo = e.target.value;
-    
-    if (!timeFrom || !newTimeTo) {
-      setTimeTo(newTimeTo);
-      return;
-    }
-    
-    const [fromHours, fromMinutes] = timeFrom.split(':').map(Number);
-    const [toHours, toMinutes] = newTimeTo.split(':').map(Number);
-    
-    const fromTotalMinutes = fromHours * 60 + fromMinutes;
-    const toTotalMinutes = toHours * 60 + toMinutes;
-    
-    // Если время "до" меньше или равно времени "от", не применяем изменение
-    if (toTotalMinutes > fromTotalMinutes) {
-      setTimeTo(newTimeTo);
-    }
-  };
-
-  const totalMinutes = calculateMinutes();
-  const isValid = isValidTimeRange();
+  const isValid = minuteCount > 0 && timeFrom !== '';
 
   // Расчет общей стоимости
-  const totalCost = tarifInfo && totalMinutes > 0 
-    ? (tarifInfo.minuteCost * totalMinutes).toFixed(2)
+  const totalCost = tarifInfo && minuteCount > 0 
+    ? (tarifInfo.minuteCost * minuteCount).toFixed(2)
     : '0.00';
 
   // Обработчик оформления заказа
   const handleCreateOrder = async () => {
-    if (!selectedDeviceId || !tarifInfo || !isValid || totalMinutes === 0) {
+    if (!selectedDeviceId || !tarifInfo || !isValid || minuteCount <= 0) {
       setOrderError('Заполните все поля и выберите устройство');
       return;
     }
@@ -311,7 +258,7 @@ export default function Order() {
         },
         credentials: 'include',
         body: JSON.stringify({
-          minuteCount: totalMinutes,
+          minuteCount: minuteCount,
           date: selectedDate,
           time: timeFrom,
           tarifId: tarifInfo.tarifId,
@@ -380,7 +327,7 @@ export default function Order() {
       </div>
       <div className={styles.order_time_container}>
         <div className={styles.order_time_group}>
-          <label className={styles.order_time_label}>Время от</label>
+          <label className={styles.order_time_label}>Время начала</label>
           <div className={styles.order_time_select_container}>
             <select
               className={styles.order_time_select}
@@ -418,48 +365,19 @@ export default function Order() {
           </div>
         </div>
         <div className={styles.order_time_group}>
-          <label className={styles.order_time_label}>Время до</label>
-          <div className={`${styles.order_time_select_container} ${!isValid ? styles.order_time_input_error : ''}`}>
-            <select
-              className={styles.order_time_select}
-              value={timeTo ? timeTo.split(':')[0] : '00'}
-              onChange={(e) => {
-                const newHours = e.target.value;
-                const currentMinutes = timeTo ? timeTo.split(':')[1] : '00';
-                const newTime = `${newHours}:${currentMinutes}`;
-                handleTimeToChange({ target: { value: newTime } } as React.ChangeEvent<HTMLInputElement>);
-              }}
-            >
-              {Array.from({ length: 24 }, (_, i) => (
-                <option key={i} value={String(i).padStart(2, '0')}>
-                  {String(i).padStart(2, '0')}
-                </option>
-              ))}
-            </select>
-            <span className={styles.order_time_separator}>:</span>
-            <select
-              className={styles.order_time_select}
-              value={timeTo ? timeTo.split(':')[1] : '00'}
-              onChange={(e) => {
-                const newMinutes = e.target.value;
-                const currentHours = timeTo ? timeTo.split(':')[0] : '00';
-                const newTime = `${currentHours}:${newMinutes}`;
-                handleTimeToChange({ target: { value: newTime } } as React.ChangeEvent<HTMLInputElement>);
-              }}
-            >
-              {Array.from({ length: 60 }, (_, i) => (
-                <option key={i} value={String(i).padStart(2, '0')}>
-                  {String(i).padStart(2, '0')}
-                </option>
-              ))}
-            </select>
-          </div>
+          <label className={styles.order_time_label}>Количество минут</label>
+          <input
+            type="number"
+            className={`${styles.order_minute_input} ${!isValid ? styles.order_time_input_error : ''}`}
+            value={minuteCount}
+            onChange={handleMinuteCountChange}
+            min="1"
+            placeholder="Введите количество минут"
+          />
         </div>
       </div>
       <div className={styles.order_total_container}>
-        <p className={styles.order_total_text}>
-          Всего минут: <span className={styles.order_total_minutes}>{totalMinutes}</span>
-        </p>
+        
         {tarifInfo && (
           <>
             <p className={styles.order_price_text}>
@@ -479,7 +397,7 @@ export default function Order() {
         {orderSuccess && (
           <div className={styles.order_success_message}>Заказ успешно оформлен! Перенаправление...</div>
         )}
-        {selectedDeviceId && tarifInfo && totalMinutes > 0 && isValid && (
+        {selectedDeviceId && tarifInfo && minuteCount > 0 && isValid && (
           <button
             className={styles.order_submit_button}
             onClick={handleCreateOrder}
