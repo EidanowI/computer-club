@@ -34,6 +34,9 @@ app.get('/api/test', (req, res) => {
 const authRoutes = require('./routers/authRoutes');
 app.use('/api/auth', authRoutes);
 
+const orderRoutes = require('./routers/orderRoutes');
+app.use('/api/orders', orderRoutes);
+
 // Обработка ошибок
 app.use((err, req, res, next) => {
   console.error(err.stack);
