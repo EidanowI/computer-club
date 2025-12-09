@@ -138,11 +138,89 @@ const getCurrentUser = async (req, res) => {
   }
 };
 
+/**
+ * Обновить номер телефона пользователя
+ * PUT /api/auth/update-phone
+ */
+const updatePhone = async (req, res) => {
+  try {
+    const { phone } = req.body;
+    const userId = req.session.userId;
+
+    if (!userId) {
+      return res.status(401).json({ error: 'Необходима авторизация' });
+    }
+
+    if (!phone) {
+      return res.status(400).json({ error: 'Номер телефона обязателен' });
+    }
+
+    const success = await User.updatePhone(userId, phone);
+    if (!success) {
+      return res.status(404).json({ error: 'Пользователь не найден' });
+    }
+
+    // Получаем обновленные данные пользователя
+    const user = await User.findById(userId);
+    const admin = await User.isAdmin(userId);
+
+    res.json({
+      message: 'Номер телефона успешно обновлен',
+      user: {
+        id: user.id,
+        login: user.login,
+        name: user.name,
+        phone: user.phone,
+        isAdmin: !!admin
+      }
+    });
+  } catch (error) {
+    console.error('Ошибка при обновлении телефона:', error);
+    res.status(500).json({ error: 'Ошибка при обновлении номера телефона' });
+  }
+};
+
+/**
+ * Удалить профиль пользователя
+ * DELETE /api/auth/delete-profile
+ */
+const deleteProfile = async (req, res) => {
+  try {
+    const userId = req.session.userId;
+
+    if (!userId) {
+      return res.status(401).json({ error: 'Необходима авторизация' });
+    }
+
+    const success = await User.delete(userId);
+    if (!success) {
+      return res.status(404).json({ error: 'Пользователь не найден' });
+    }
+
+    // Уничтожаем сессию
+    req.session.destroy((err) => {
+      if (err) {
+        console.error('Ошибка при уничтожении сессии:', err);
+        return res.status(500).json({ error: 'Ошибка при удалении профиля' });
+      }
+
+      res.json({
+        message: 'Профиль успешно удален'
+      });
+    });
+  } catch (error) {
+    console.error('Ошибка при удалении профиля:', error);
+    res.status(500).json({ error: 'Ошибка при удалении профиля' });
+  }
+};
+
 module.exports = {
   register,
   login,
   logout,
-  getCurrentUser
+  getCurrentUser,
+  updatePhone,
+  deleteProfile
 };
 
 
