@@ -40,6 +40,9 @@ app.use('/api/orders', orderRoutes);
 const teamRoutes = require('./routers/teamRoutes');
 app.use('/api/teams', teamRoutes);
 
+const competitionRoutes = require('./routers/competitionRoutes');
+app.use('/api/competitions', competitionRoutes);
+
 // Обработка ошибок
 app.use((err, req, res, next) => {
   console.error(err.stack);
