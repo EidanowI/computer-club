@@ -2,6 +2,7 @@ import NavBar from "../../components/NavBar";
 import MainSection from "../../components/MainSection";
 import InfoSection from "../../components/InfoSection";
 import PriceSection from "../../components/PriceSection";
+import ContactsSection from "../../components/ContactsSection";
 
 const navSections = [
   { id: 'home', label: 'О клубе', iconPath: "" },
@@ -18,7 +19,7 @@ export default function Home() {
     <div className="app">
       <NavBar sections={navSections} />
       <main className="main-content">
-      <section id="home" className="content-section">
+      <section id="home" className="content-section_home">
         <MainSection/>
       </section>
 
@@ -42,8 +43,8 @@ export default function Home() {
         <PriceSection/>
       </section>
 
-      <section id="contscts" className="content-section">
-        <PriceSection/>
+      <section id="contscts" className="content-section-contacts">
+        <ContactsSection/>
       </section>
       </main>
     </div>

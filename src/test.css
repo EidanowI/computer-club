@@ -29,6 +29,10 @@ body{
   border-top: 1px solid #00c1fc00
 }
 
+.content-section-contacts{
+  height: 85dvh;
+}
+
 @media (max-width: 768px) {
   .main-content {
     margin-left: 200px;
