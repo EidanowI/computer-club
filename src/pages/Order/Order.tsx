@@ -110,6 +110,29 @@ export default function Order() {
     navigate('/');
   };
 
+  // Проверка, что выбранное время не в прошлом
+  const isTimeInPast = (date: string, time: string) => {
+    if (date < today) {
+      return true; // Дата в прошлом
+    }
+    if (date === today) {
+      const [hours, minutes] = time.split(':').map(Number);
+      const selectedMinutes = hours * 60 + minutes;
+      const now = new Date();
+      const currentMinutes = now.getHours() * 60 + now.getMinutes();
+      return selectedMinutes < currentMinutes;
+    }
+    return false; // Дата в будущем
+  };
+
+  // Получить минимальное время для выбора (если выбрана сегодняшняя дата - текущее время, иначе 00:00)
+  const getMinTime = () => {
+    if (selectedDate === today) {
+      return getCurrentTime();
+    }
+    return '00:00';
+  };
+
   // Функция для получения занятых устройств с бэкэнда
   const fetchBusyDevices = useCallback(async () => {
     if (!selectedDate || !timeFrom || !minuteCount || minuteCount <= 0) {
@@ -160,6 +183,14 @@ export default function Order() {
       fetchBusyDevices();
     }
   }, [selectedDate, timeFrom, minuteCount, isAuthorized, fetchBusyDevices]);
+
+  // Проверяем и обновляем время при изменении даты
+  useEffect(() => {
+    if (selectedDate === today && isTimeInPast(selectedDate, timeFrom)) {
+      const currentTime = getCurrentTime();
+      setTimeFrom(currentTime);
+    }
+  }, [selectedDate, today, timeFrom]);
 
   // Функция для получения информации о тарифе устройства
   const fetchDeviceTarif = useCallback(async (deviceId: number) => {
@@ -222,7 +253,18 @@ export default function Order() {
   };
 
   const handleTimeFromChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setTimeFrom(e.target.value);
+    const newTime = e.target.value;
+    
+    // Проверяем, что время не в прошлом
+    if (isTimeInPast(selectedDate, newTime)) {
+      // Если время в прошлом, устанавливаем минимальное допустимое время
+      setTimeFrom(getMinTime());
+      setOrderError('Нельзя выбрать прошедшее время');
+      setTimeout(() => setOrderError(null), 3000);
+    } else {
+      setTimeFrom(newTime);
+      setOrderError(null);
+    }
   };
 
   const handleMinuteCountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -232,7 +274,17 @@ export default function Order() {
     }
   };
 
-  const isValid = minuteCount > 0 && timeFrom !== '';
+  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newDate = e.target.value;
+    setSelectedDate(newDate);
+    
+    // Если выбрана сегодняшняя дата и текущее время уже прошло, обновляем время
+    if (newDate === today && isTimeInPast(newDate, timeFrom)) {
+      setTimeFrom(getCurrentTime());
+    }
+  };
+
+  const isValid = minuteCount > 0 && timeFrom !== '' && !isTimeInPast(selectedDate, timeFrom);
 
   // Расчет общей стоимости
   const totalCost = tarifInfo && minuteCount > 0 
@@ -321,14 +373,14 @@ export default function Order() {
           type="date" 
           className={styles.order_date_input}
           value={selectedDate}
-          onChange={(e) => setSelectedDate(e.target.value)}
+          onChange={handleDateChange}
           min={today}
         />
       </div>
       <div className={styles.order_time_container}>
         <div className={styles.order_time_group}>
           <label className={styles.order_time_label}>Время начала</label>
-          <div className={styles.order_time_select_container}>
+          <div className={`${styles.order_time_select_container} ${isTimeInPast(selectedDate, timeFrom) ? styles.order_time_input_error : ''}`}>
             <select
               className={styles.order_time_select}
               value={timeFrom ? timeFrom.split(':')[0] : '00'}
@@ -339,11 +391,21 @@ export default function Order() {
                 handleTimeFromChange({ target: { value: newTime } } as React.ChangeEvent<HTMLInputElement>);
               }}
             >
-              {Array.from({ length: 24 }, (_, i) => (
-                <option key={i} value={String(i).padStart(2, '0')}>
-                  {String(i).padStart(2, '0')}
-                </option>
-              ))}
+              {(() => {
+                const now = new Date();
+                const currentHour = selectedDate === today ? now.getHours() : 0;
+                return Array.from({ length: 24 }, (_, i) => {
+                  // Если выбрана сегодняшняя дата, скрываем прошедшие часы
+                  if (selectedDate === today && i < currentHour) {
+                    return null;
+                  }
+                  return (
+                    <option key={i} value={String(i).padStart(2, '0')}>
+                      {String(i).padStart(2, '0')}
+                    </option>
+                  );
+                }).filter(Boolean);
+              })()}
             </select>
             <span className={styles.order_time_separator}>:</span>
             <select
@@ -356,11 +418,24 @@ export default function Order() {
                 handleTimeFromChange({ target: { value: newTime } } as React.ChangeEvent<HTMLInputElement>);
               }}
             >
-              {Array.from({ length: 60 }, (_, i) => (
-                <option key={i} value={String(i).padStart(2, '0')}>
-                  {String(i).padStart(2, '0')}
-                </option>
-              ))}
+              {(() => {
+                const now = new Date();
+                const [selectedHours] = timeFrom ? timeFrom.split(':').map(Number) : [0, 0];
+                const currentHour = selectedDate === today ? now.getHours() : 0;
+                const currentMinute = selectedDate === today ? now.getMinutes() : 0;
+                
+                return Array.from({ length: 60 }, (_, i) => {
+                  // Если выбрана сегодняшняя дата и выбран текущий час, скрываем прошедшие минуты
+                  if (selectedDate === today && selectedHours === currentHour && i < currentMinute) {
+                    return null;
+                  }
+                  return (
+                    <option key={i} value={String(i).padStart(2, '0')}>
+                      {String(i).padStart(2, '0')}
+                    </option>
+                  );
+                }).filter(Boolean);
+              })()}
             </select>
           </div>
         </div>
