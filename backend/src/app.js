@@ -37,6 +37,9 @@ app.use('/api/auth', authRoutes);
 const orderRoutes = require('./routers/orderRoutes');
 app.use('/api/orders', orderRoutes);
 
+const teamRoutes = require('./routers/teamRoutes');
+app.use('/api/teams', teamRoutes);
+
 // Обработка ошибок
 app.use((err, req, res, next) => {
   console.error(err.stack);

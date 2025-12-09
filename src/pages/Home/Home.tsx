@@ -4,6 +4,7 @@ import InfoSection from "../../components/InfoSection";
 import PriceSection from "../../components/PriceSection";
 import ContactsSection from "../../components/ContactsSection";
 import ArenaSection from "../../components/ArenasSection";
+import CompetsSection from "../../components/CompetsSection";
 
 const navSections = [
   { id: 'home', label: 'О клубе', iconPath: "" },
@@ -41,7 +42,7 @@ export default function Home() {
       </section>
 
       <section id="compets" className="content-section">
-        <PriceSection/>
+        <CompetsSection/>
       </section>
 
       <section id="contscts" className="content-section-contacts">

@@ -28,6 +28,12 @@ interface AdminOrdersByDate {
   totalSum: string;
 }
 
+interface Team {
+  id: number;
+  name: string;
+  user_id: number;
+}
+
 export default function UserProfile() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
@@ -43,6 +49,12 @@ export default function UserProfile() {
   const [adminOrders, setAdminOrders] = useState<AdminOrdersByDate | null>(null);
   const [adminOrdersLoading, setAdminOrdersLoading] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
+  const [team, setTeam] = useState<Team | null>(null);
+  const [teamLoading, setTeamLoading] = useState(false);
+  const [showTeamModal, setShowTeamModal] = useState(false);
+  const [teamName, setTeamName] = useState('');
+  const [teamError, setTeamError] = useState<string | null>(null);
+  const [teamCreating, setTeamCreating] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -129,6 +141,36 @@ export default function UserProfile() {
       fetchOrders();
     }
   }, [user, selectedDate]);
+
+  // Загрузка команды пользователя (только для не-админов)
+  useEffect(() => {
+    const fetchTeam = async () => {
+      if (!user || user.isAdmin) return;
+      
+      setTeamLoading(true);
+      try {
+        const response = await fetch('http://localhost:5000/api/teams/my-team', {
+          credentials: 'include'
+        });
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const jsonData = await response.json();
+        setTeam(jsonData.team);
+      } catch (err) {
+        console.error('Ошибка получения команды:', err);
+        setTeam(null);
+      } finally {
+        setTeamLoading(false);
+      }
+    };
+
+    if (user) {
+      fetchTeam();
+    }
+  }, [user]);
 
   const handleLogoClick = () => {
     navigate('/');
@@ -280,6 +322,79 @@ export default function UserProfile() {
       month: '2-digit', 
       year: 'numeric' 
     });
+  };
+
+  const handleCreateTeam = () => {
+    setTeamName('');
+    setTeamError(null);
+    setShowTeamModal(true);
+  };
+
+  const handleTeamSubmit = async () => {
+    if (!teamName.trim()) {
+      setTeamError('Название команды обязательно');
+      return;
+    }
+
+    if (teamName.length > 10) {
+      setTeamError('Название команды не должно превышать 10 символов');
+      return;
+    }
+
+    setTeamCreating(true);
+    setTeamError(null);
+
+    try {
+      const response = await fetch('http://localhost:5000/api/teams', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include',
+        body: JSON.stringify({ name: teamName.trim() })
+      });
+
+      const jsonData = await response.json();
+
+      if (!response.ok) {
+        throw new Error(jsonData.error || 'Ошибка при создании команды');
+      }
+
+      setTeam(jsonData.team);
+      setShowTeamModal(false);
+      setTeamName('');
+    } catch (err: any) {
+      setTeamError(err.message || 'Ошибка при создании команды');
+    } finally {
+      setTeamCreating(false);
+    }
+  };
+
+  const handleDeleteTeam = async () => {
+    if (!team) return;
+
+    if (!window.confirm('Вы уверены, что хотите удалить команду?')) {
+      return;
+    }
+
+    setTeamLoading(true);
+    try {
+      const response = await fetch('http://localhost:5000/api/teams/my-team', {
+        method: 'DELETE',
+        credentials: 'include'
+      });
+
+      if (!response.ok) {
+        throw new Error('Ошибка при удалении команды');
+      }
+
+      setTeam(null);
+    } catch (err) {
+      console.error('Ошибка удаления команды:', err);
+      alert('Ошибка при удалении команды');
+    } finally {
+      setTeamLoading(false);
+    }
   };
 
   if (loading) {
@@ -437,6 +552,34 @@ export default function UserProfile() {
                 </div>
               </div>
             )}
+
+            {!user.isAdmin && (
+              <div className={styles.infoItem}>
+                <div className={styles.infoLabel}>Команда</div>
+                {teamLoading ? (
+                  <div className={styles.infoValue}>Загрузка...</div>
+                ) : team ? (
+                  <div className={styles.teamRow}>
+                    <div className={styles.teamName}>{team.name}</div>
+                    <button 
+                      className={styles.deleteTeamButton}
+                      onClick={handleDeleteTeam}
+                      title="Удалить команду"
+                      disabled={teamLoading}
+                    >
+                      🗑️
+                    </button>
+                  </div>
+                ) : (
+                  <button 
+                    className={styles.createTeamButton}
+                    onClick={handleCreateTeam}
+                  >
+                    ➕ Создать команду
+                  </button>
+                )}
+              </div>
+            )}
           </div>
 
           <button 
@@ -520,6 +663,46 @@ export default function UserProfile() {
             >
               Закрыть
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* Модальное окно для создания команды */}
+      {showTeamModal && (
+        <div className={styles.modalOverlay} onClick={() => !teamCreating && setShowTeamModal(false)}>
+          <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+            <h2 className={styles.modalTitle}>Создать команду</h2>
+            <input
+              type="text"
+              className={styles.modalInput}
+              value={teamName}
+              onChange={(e) => {
+                setTeamName(e.target.value);
+                setTeamError(null);
+              }}
+              placeholder="Введите название команды (макс. 10 символов)"
+              maxLength={10}
+              disabled={teamCreating}
+            />
+            {teamError && (
+              <div className={styles.modalError}>{teamError}</div>
+            )}
+            <div className={styles.modalButtons}>
+              <button
+                className={styles.modalButtonCancel}
+                onClick={() => setShowTeamModal(false)}
+                disabled={teamCreating}
+              >
+                Отмена
+              </button>
+              <button
+                className={styles.modalButtonConfirm}
+                onClick={handleTeamSubmit}
+                disabled={teamCreating}
+              >
+                {teamCreating ? 'Создание...' : 'Создать'}
+              </button>
+            </div>
           </div>
         </div>
       )}
