@@ -225,30 +225,51 @@ export default function UserProfile() {
   // Определение статуса заказа: 'past' - прошёл, 'active' - идёт, 'future' - не наступил
   const getOrderStatus = (order: Order): 'past' | 'active' | 'future' => {
     const now = new Date();
+    // Нормализуем дату заказа (убираем время, если есть)
+    const orderDateStr = String(order.date);
+    const orderDate = orderDateStr.includes('T') ? orderDateStr.split('T')[0] : orderDateStr.split(' ')[0];
     const today = now.toISOString().split('T')[0];
-    const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
     
-    // Вычисляем время окончания заказа
-    const [orderHours, orderMinutes] = order.time.split(':').map(Number);
+    // Преобразуем текущее время в минуты (от начала дня)
+    const currentMinutes = now.getHours() * 60 + now.getMinutes();
+    
+    // Вычисляем время начала и окончания заказа в минутах (от начала дня)
+    // Время может быть в формате HH:MM:SS или HH:MM
+    const timeStr = String(order.time);
+    const timeParts = timeStr.split(':');
+    const orderHours = parseInt(timeParts[0], 10);
+    const orderMinutes = parseInt(timeParts[1], 10);
     const orderStartMinutes = orderHours * 60 + orderMinutes;
-    const orderEndMinutes = orderStartMinutes + order.minute_count;
-    const orderEndHours = Math.floor(orderEndMinutes / 60);
-    const orderEndMins = orderEndMinutes % 60;
-    const orderEndTime = `${String(orderEndHours).padStart(2, '0')}:${String(orderEndMins).padStart(2, '0')}`;
     
-    if (order.date < today) {
+    // Убеждаемся, что minute_count - это число
+    const minuteCount = typeof order.minute_count === 'number' 
+      ? order.minute_count 
+      : parseInt(String(order.minute_count), 10);
+    const orderEndMinutes = orderStartMinutes + minuteCount;
+    
+    // Максимальное количество минут в дне (23:59 = 1439 минут)
+    const maxMinutesInDay = 24 * 60 - 1;
+    
+    if (orderDate < today) {
       return 'past'; // Заказ прошёл
-    } else if (order.date > today) {
+    } else if (orderDate > today) {
       return 'future'; // Заказ ещё не наступил
     } else {
-      // Сегодня - проверяем время
-      if (currentTime >= orderEndTime) {
+      // Сегодня - проверяем время в минутах
+      // Если заказ переходит через полночь (orderEndMinutes > maxMinutesInDay),
+      // то считаем, что он заканчивается в 23:59
+      const actualOrderEndMinutes = Math.min(orderEndMinutes, maxMinutesInDay);
+      
+      // Проверяем статус: сначала проверяем, не закончился ли заказ
+      if (currentMinutes >= actualOrderEndMinutes) {
         return 'past'; // Заказ уже закончился сегодня
-      } else if (currentTime >= order.time) {
+      } 
+      // Затем проверяем, начался ли заказ
+      if (currentMinutes >= orderStartMinutes) {
         return 'active'; // Заказ идёт сейчас
-      } else {
-        return 'future'; // Заказ начнётся позже сегодня
       }
+      // Иначе заказ ещё не начался
+      return 'future'; // Заказ начнётся позже сегодня
     }
   };
 
